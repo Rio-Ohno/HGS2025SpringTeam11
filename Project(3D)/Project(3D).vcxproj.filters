@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="OR">
+      <UniqueIdentifier>{a7130a25-bd4d-4641-ad77-b204abfa64dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ST">
+      <UniqueIdentifier>{7dc37694-621f-4996-95fc-57b56f220e3f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="light.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="meshfield.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="meshfield.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
