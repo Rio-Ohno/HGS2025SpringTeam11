@@ -1,411 +1,373 @@
-//====================================
+//================================
 //
-// マップエディター試作版 [main.cpp]
-// Author: Asuma Nishio
+//　ウインドウ表示処理[main.cpp]
+//　Author:kaiti
 //
-//====================================
-
-//****************************
-// インクルードファイル宣言
-//****************************
+//================================
 #include "main.h"
-#include <time.h>
-#include <stdlib.h>
+#include "input.h"
+#include "fade.h"
+#include "title.h"
+#include "result.h"
+#include "game.h"
+#include "ranking.h"
+#include "sound.h"
+#include "camera.h"
+//#include "player.h"
+#include "mouse.h"
+#include "titleinfo.h"
+#include "pause.h"
 #include <crtdbg.h>
 #include <stdio.h>
-#include "camera.h"
-#include "light.h"
-#include "input.h"
-#include "meshfield.h"
-#include "mouse.h"
 
-//*****************************
-// グローバル変数宣言
-//*****************************
-LPDIRECT3D9 g_pD3D = NULL;				// Direct3Dオブジェクトへのポインタ
-LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;	// Direct3Dデバイスへのポインタ
-MODE g_mode = MODE_EDIT;				// 現在のモード
-bool g_isFullscreen = false;			// ウィンドウを切り替えるためのフラグ
-RECT g_windowRect;						// ウィンドウを切り替えるための変数
-LPD3DXFONT g_pFont = NULL;				// フォントへのポインタ
-int g_nCountFPS = 0;					// FPSカウンタ
-int nGetNumber = 0;						// 番号
-int Filenamepass;						// ファイル名
-int nBlockSet = 0;						// 配置するブロック数
+//グローバル変数宣言
+LPDIRECT3D9 g_pD3D = NULL;
+LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;
+MODE g_mode = MODE_TITLE;
+LPD3DXFONT g_pFont;
+RECT g_windowRect; // ウィンドウ切り替え変数
+bool bDispFont = true;
+bool g_isFullscreen = false; // 初期状態をフルスクリーンにしない
 
-//******************************
 // プロトタイプ宣言
-//******************************
-void ToggleFullscreen(HWND hWnd);	// ウィンドウをフルスクリーンにする方法
-void DrawModeChange();				// モード切り替え
-void DebugEditModelInfo();			// 配置モデル情報
-void DrawCameraPos(void);			// カメラの座標表示
-void onWireFrame();					// ワイヤーフレーム起動
-void offWireFrame();				// ワイヤーフレーム終了
+void ToggleFullScreen(HWND hWnd); // フルスクリーン変更処理
 
-//===============================
+//=============
 // メイン関数
-//===============================
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_  HINSTANCE hInstancePrev, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+//=============
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPSTR ipCmdLine, _In_ int nCmdShow)
 {
 	// メモリリーク検知用のフラグ
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);		
-
-	DWORD dwCurrentTime;			// 現在時刻
-	DWORD dwExecLastTime;			// 終了時刻
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
 
 	WNDCLASSEX wcex =
 	{
-		sizeof(WNDCLASSEX),				 // WNDCLASSEXのメモリサイズ
-		CS_CLASSDC,						 // ウインドウのスタイル
-		WindowProc,						 // ウインドウプロシージャ
-		0,								 // 0にする
-		0,								 // 0にする
-		hInstance,						 // インスタンスハンドル
-		LoadIcon(NULL,IDI_APPLICATION),  // タスクバーアイコン
-		LoadCursor(NULL,IDC_ARROW),      // マウスカーソル
-		(HBRUSH)(COLOR_WINDOW + 1),      // クライアント領域の背景色
-		NULL,                            // メニューバー
-		CLASS_NAME,                      // ウインドウクラスの名前
-		LoadIcon(NULL,IDI_APPLICATION),  // ファイルアイコン
+		sizeof(WNDCLASSEX),
+		CS_CLASSDC,
+		WindowProc,
+		0,
+		0,
+		hInstance,
+		LoadIcon(NULL,IDI_APPLICATION),
+		LoadCursor(NULL,IDC_ARROW),
+		(HBRUSH)(COLOR_WINDOW + 1),
+		NULL,
+		CLASS_NAME,
+		LoadIcon(NULL,IDI_APPLICATION)
 	};
 
+	HWND hWnd;
+	MSG msg;
 
-	HWND hWnd = {};  // ウインドウハンドル(識別子)
-	MSG msg;    //メッセージを格納する変数
-
-	// 画面サイズの構造
 	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
-	// フルスクリーンモード
-	BOOL bWindow = FALSE;
-
-	// ウインドウクラスの登録
+	//ウインドウクラスの登録
 	RegisterClassEx(&wcex);
 
-	// クライアント領域
+	//クライアント領域を指定のサイズに調整
 	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-	// ウインドウを生成
-	hWnd = CreateWindowEx(0,		// 拡張ウインドウスタイル
-		CLASS_NAME,					// ウインドウクラスの名前
-		WINDOW_NAME,				// ウインドウの名前
-		WS_OVERLAPPEDWINDOW,		// ウインドウスタイル
-		CW_USEDEFAULT,				// ウインドウの左上のX座標
-		CW_USEDEFAULT,				// ウインドウの左上のY座標
-		(rect.right - rect.left),   // ウインドウ幅
-		(rect.bottom - rect.top),   // ウインドウの高さ
-		NULL,						// NULL
-		NULL,						// NULL
-		hInstance,					// インスタンスハンドル
-		NULL);						// ウインドウ作成データ
+	//ウインドウを生成
+	hWnd = CreateWindowEx(0,
+		                  CLASS_NAME,
+		                  WINDOW_NAME,
+		                  WS_OVERLAPPEDWINDOW,
+		                  CW_USEDEFAULT,
+		                  CW_USEDEFAULT,
+		                  (rect.right - rect.left),
+		                  (rect.bottom - rect.top),
+		                  NULL,
+		                  NULL,
+		                  hInstance,
+		                  NULL);
 
+	DWORD dwCurrentTime;
+	DWORD dwExecLastTime;
 
-	// 初期化処理
+	//初期化処理
+	//初期化処理
 	if (FAILED(Init(hInstance, hWnd, TRUE)))
-	{
-		// 初期化処理が失敗したとき
+	{// 初期化処理が失敗したとき
 		return -1;
 	}
 
-	// 分解能をせってい
+	
+	//分解能を設定
 	timeBeginPeriod(1);
-	dwCurrentTime = 0;					// 初期化
-	dwExecLastTime = timeGetTime();		// 現在時刻を保存
+	dwCurrentTime = 0;
+	dwExecLastTime = timeGetTime();	
 
-	// ウインドウの表示
-	ShowWindow(hWnd, nCmdShow); // ウインドウの表示状態の設定
-	UpdateWindow(hWnd);				    // クライアント領域の更新
+	//ウインドウの表示 (フルスクリーン)
+	ShowWindow(hWnd, SW_SHOWMAXIMIZED);
+	UpdateWindow(hWnd);
 
-	// 初期化
-	DWORD dwFrameCount;					// フレームカウント
-	DWORD dwFPSLastTime;				// 最後にFPSを計測した時刻
-
-	dwFrameCount = 0;					// フレームカウントを初期化
-	dwFPSLastTime = timeGetTime();		// 現在の時刻を取得
-
-	// メッセージループ
+	//メッセージループ
 	while (1)
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
 		{
-			// Windowsの処理
 			if (msg.message == WM_QUIT)
 			{
-				// WM_QUITメッセージを受け取ったらループ抜ける
 				break;
 			}
 			else
 			{
-				// メッセージ設定
-				TranslateMessage(&msg);	// 仮想キーメッセージを文字メッセージへ変換
-
-				DispatchMessage(&msg);	// ウインドウプロシージャへメッセージを送出
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
-		}
-
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
-		{
-			if (!GetMessage(&msg, NULL, 0, 0)) 
-			{
-				break;
-			}
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			
 		}
 		else
-		{// DirectXの処理
-			dwCurrentTime = timeGetTime();		// 現在時刻の取得
-			if ((dwCurrentTime - dwFPSLastTime) >= 500)
-			{
-				// 0.5秒経過
-				// FPSを計測
-				g_nCountFPS = (dwFrameCount * 1000) / (dwCurrentTime - dwFPSLastTime);
-
-				dwFPSLastTime = dwCurrentTime;	// 保存
-
-				dwFrameCount = 0;				// 0に戻す
-
-			}
-
+		{//DirectXの処理
+			dwCurrentTime = timeGetTime();
 			if ((dwCurrentTime - dwExecLastTime) >= (1000 / 60))
 			{
-				// 60/1経過
-				dwExecLastTime = dwCurrentTime;	// 処理開始の時刻
+				dwExecLastTime = dwCurrentTime;
 
-				dwFrameCount++;					// フレームカウントを加算
+				if (g_mode == MODE_END)
+				{
+					break;
+				}
 
-				// 更新処理
+				//更新処理
 				Update();
-
-				// 描画処理
+				//描画処理
 				Draw();
-
 			}
 		}
 	}
-
-	// 終了処理
+	//終了処理
 	Uninit();
 
-	// 分解能を戻す
+	//
 	timeEndPeriod(1);
 
-	// ウインドウクラスの登録を解除
+	//ウインドウクラスの解除
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
-	// メッセージを返す
 	return(int)msg.wParam;
 }
 
-//=======================================
+//========================
 // ウインドウプロシージャ
-//=======================================
+//========================
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	const RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT }; // ウインドウの領域
 	int nID;
+
+	switch (g_mode)
+	{
+	case MODE_END:
+		DestroyWindow(hWnd);
+		break;
+
+	default:
+		break;
+	}
 
 	switch (uMsg)
 	{
-	case WM_ACTIVATE:	// アクティブ時：1　非アクティブ時：0
-		return 0L;
-
-	case WM_DESTROY: // ウインドウ破棄メッセージ
-		// WM_QUITメッセージを送る
-		PostQuitMessage(0); // ウインドウの破棄
+	case WM_DESTROY:
+		//WM_QUITメッセージを送る
+		PostQuitMessage(0);
 		break;
 
-	case WM_KEYDOWN: // キー押下のメッセージ
+	case WM_KEYDOWN: //キー押下のメッセージ
 		switch (wParam)
 		{
-		case VK_ESCAPE:	// [ESC]キーが押された
-
+		case VK_ESCAPE://[ESC]キーが押された場合
 			nID = MessageBox(hWnd, "終了しますか?", "終了メッセージ", MB_YESNO);
 			if (nID == IDYES)
 			{
-				DestroyWindow(hWnd); // ウインドウ破棄メッセージ
+				DestroyWindow(hWnd);
 			}
 			else
 			{
-				return 0;			 // 返す
+				return 0;
 			}
+			break;
 
+		case VK_F11:
+			// F11キーが押された
+			ToggleFullScreen(hWnd);
+			break;
+
+		default:
 			break;
 		}
 		break;
 
-	case WM_MOUSEWHEEL: // マウスのホイール判定
-
-		// ローカル変数
+	case WM_MOUSEWHEEL:
+	{
+		GAMESTATE state = GetGameSatate();
 		int zDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-
-		// ホイール情報
-		MouseWheel(zDelta);
+		//SetMouseWheel(zDelta);
+		//使用する魔法の種類を変更
+		if (g_mode == MODE_TITLE)
+		{
+			UpdateTitleInfo(zDelta);
+		}
+		if(state == GAMESTATE_PAUSE)
+		{
+			UpdatePause(zDelta);
+		}
+	}
+		break;
+	default:
 		break;
 	}
 
-	return DefWindowProc(hWnd, uMsg, wParam, lParam); // 既定の処理を繰り返す
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-//=========================
+
+//==================
+// デバイスの取得
+//==================
+LPDIRECT3DDEVICE9 GetDevice(void)
+{
+	return g_pD3DDevice;
+}
+
+//=============
 // 初期化処理
-//=========================
+//=============
 HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 {
-	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
-	D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ
+	// マウスカーソルの非表示
+	ShowCursor(FALSE);
 
-	// Direct3Dオブジェクトの生成
+	D3DDISPLAYMODE d3ddm;
+	D3DPRESENT_PARAMETERS d3dpp;
+	//Direct3Dオブジェクトの生成
 	g_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
 
 	if (g_pD3D == NULL)
 	{
 		return E_FAIL;
 	}
-	// 現在のディスプレイモードを取得
+	//現在のディスプレイモードを取得
 	if (FAILED(g_pD3D->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &d3ddm)))
 	{
 		return E_FAIL;
 	}
 
-	// パラメーターの0クリア
+	//デバイスのプレゼンテーションパラメータの設定
 	ZeroMemory(&d3dpp, sizeof(d3dpp));
+	d3dpp.BackBufferWidth = SCREEN_WIDTH;
+	d3dpp.BackBufferHeight = SCREEN_HEIGHT;
+	d3dpp.BackBufferFormat = d3ddm.Format;
+	d3dpp.BackBufferCount = 1;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dpp.EnableAutoDepthStencil = TRUE;
+	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
+	d3dpp.Windowed = bWindow;
+	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
-	d3dpp.BackBufferWidth = SCREEN_WIDTH;						// ゲーム画面サイズ(幅)
-	d3dpp.BackBufferHeight = SCREEN_HEIGHT;						// ゲーム画面サイズ(高さ)
-	d3dpp.BackBufferFormat = d3ddm.Format;						// バックバッファの形式
-	d3dpp.BackBufferCount = 1;									// バックバッファの数
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;					// ダブルバッファの切り替え(映像信号に同期)
-	d3dpp.EnableAutoDepthStencil = TRUE;						// デプスバッファとステンシルバッファを作成
-	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;					// デプスバッファとして16bitを使用
-	d3dpp.Windowed = bWindow;									// ウインドウモード
-	d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;	// リフレッシュシレート
-	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;	// インターバル
-
-	// Direct3Dデバイスの生成(描画処理と頂点処理をハードウェアで行う)
+	//Direct3Dデバイスの生成
 	if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
-		D3DDEVTYPE_HAL,
-		hWnd,
-		D3DCREATE_HARDWARE_VERTEXPROCESSING,
-		&d3dpp,
-		&g_pD3DDevice)))
-	{
-		// Direct3Dデバイスの生成(描画処理はハードウェア,頂点処理をCPUで行う)
+		                            D3DDEVTYPE_HAL,
+		                            hWnd,
+		                            D3DCREATE_HARDWARE_VERTEXPROCESSING,
+		                            &d3dpp,
+		                            &g_pD3DDevice)))
+	{//Direct3Dデバイスの生成
 		if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
-			D3DDEVTYPE_HAL,
-			hWnd,
-			D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-			&d3dpp,
-			&g_pD3DDevice)))
-		{
-			// Direct3Dデバイスの生成(描画処理,頂点処理をCPUで行う)
+			                            D3DDEVTYPE_HAL,
+			                            hWnd,
+			                            D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+			                            &d3dpp,
+			                            &g_pD3DDevice)))
+		{//Direct3Dデバイスの生成
 			if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT,
-				D3DDEVTYPE_REF,
-				hWnd,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-				&d3dpp,
-				&g_pD3DDevice)))
+				                            D3DDEVTYPE_REF,
+				                            hWnd,
+				                            D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+				                            &d3dpp,
+				                            &g_pD3DDevice)))
 			{
 				return E_FAIL;
 			}
 		}
 	}
 
-	// レンダーステートの設定
+	//レンダーステートの設定
 	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	g_pD3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-	g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-	g_pD3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	g_pD3DDevice->SetRenderState(D3DRS_SRCBLEND,D3DBLEND_SRCALPHA);
+	g_pD3DDevice->SetRenderState(D3DRS_DESTBLEND,D3DBLEND_INVSRCALPHA);
 
-	// サンプラーステートの設定
+	//サンプラーステートの設定
 	g_pD3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	g_pD3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	g_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
 	g_pD3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-
-	// テクスチャステージチャートの設定
+	
+	//テクスチャステージステートの設定
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
+	g_pD3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2,D3DTA_CURRENT);
 
-	//==============================
-	// 初期化処理
-	//==============================
+	//------------------------------
+	//各種オブジェクトの初期化処理
+	//------------------------------
 	if (FAILED(InitKeyboard(hInstance, hWnd)))
-	{// キーボード
-		return E_FAIL;
-	}
-	if (FAILED(InitJoypad()))
-	{// パッド
+	{
 		return E_FAIL;
 	}
 
-	// デバッグ表示用のフォントを設定
+	if (FAILED(InitMouse(hInstance, hWnd)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(InitJoypad()))
+	{
+		return E_FAIL;
+	}
+
+	// デバック表示用フォントの生成
 	D3DXCreateFont(g_pD3DDevice, 18, 0, 0, 0,
-		FALSE,
-		DEFAULT_CHARSET,
-		OUT_DEFAULT_PRECIS,
-		DEFAULT_QUALITY,
-		DEFAULT_PITCH,
+		FALSE, SHIFTJIS_CHARSET,
+		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH,
 		"Terminal", &g_pFont);
 
-	// マウス初期化
-	InitMouse(hInstance,hWnd);
+	//サウンドの初期化処理
+	InitSound(hWnd);
+	//
+	InitRanking();
+	//フェード
+	InitFade(g_mode);
 
-	// ライト
-	InitLight();
-
-	// カメラ
-	InitCamera();
-
-	// メッシュの描画
-	InitMeshfield();
-	SetMeshfield(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), 0, 10, 0, 10, 100, 100);
-
-	return S_OK; // 結果を返す
-
+	return S_OK;
 }
-//==================
+
+//==========
 // 終了処理
-//==================
+//==========
 void Uninit(void)
 {
-	//==================
-	// 各種終了処理
-	//==================
+	//----------------------------
+	//各種オブジェクトの終了処理
+	//----------------------------
+	//サウンドの終了処理
+	UninitSound();
 
-	// キーボード
 	UninitKeyboard();
 
-	// マウス
 	UninitMouse();
 
-	// パッド
 	UninitJoypad();
 
-	// ライト
-	UninitLight();
+	//
+	UninitFade();
 
-	// メッシュの終了
-	UninitMeshfield();
-
-	// デバッグ表示用のフォントの破棄
-	if (g_pFont != NULL)
-	{
-		g_pFont->Release();
-		g_pFont = NULL;
-	}
-
-	// Direct3Dデバイスの破棄
+	//D3Dデバイスの破棄
 	if (g_pD3DDevice != NULL)
 	{
 		g_pD3DDevice->Release();
 		g_pD3DDevice = NULL;
 	}
-
-	// Direct3Dオブジェクトの破棄
+	//D3Dオブジェクトの破棄
 	if (g_pD3D != NULL)
 	{
 		g_pD3D->Release();
@@ -413,268 +375,465 @@ void Uninit(void)
 	}
 
 }
-//===================
+
+//==========
 // 更新処理
-//===================
+//==========
 void Update(void)
 {
-	//===========================
-	// 各種オブジェクト更新処理
-	//===========================
-	// キーボードの更新処理
-	UpdateKeyboard();
-
-	// マウスの更新処理
+	//----------------------------
+	//各種オブジェクトの更新処理
+	//----------------------------
 	UpdateMouse();
-
-	// ゲームパッドの更新処理
+	UpdateKeyboard();
 	UpdateJoypad();
 
-	// カメラの更新
-	UpdateCamera();
+	switch (g_mode)
+	{
+	case MODE_TITLE:
+		UpdateTitle();
+		break;
+	case MODE_STAGEONE:
+		UpdateGame();
+		break;
+	case MODE_STAGETWO:
+		UpdateGame();
+		break;
+	case MODE_STAGETHREE:
+		UpdateGame();
+		break;
+	case MODE_BOSSMOVIE:
+		break;
+	case MODE_STAGEFOUR:
+		UpdateGame();
+		break;
+	case MODE_RESULT:
+		UpdateResult();
+		break;
+	case MODE_RANK:
+		UpdateRanking();
+		break;
+	default:
+		break;
+	}
+	//
+	UpdateFade();
 
-	if (KeyboardTrigger(DIK_F1))
-	{// F3キー
-		// ワイヤーフレーム起動
+#ifdef _DEBUG
+	//ワイヤー
+	if (GetKeyboardPress(DIK_F1) == true)
+	{
 		onWireFrame();
 	}
-	else if (KeyboardTrigger(DIK_F2))
-	{// F4キー
-		// ワイヤーフレーム消去
+	else if (GetKeyboardPress(DIK_F2) == true)
+	{
 		offWireFrame();
 	}
 
-	// モード切り替え
-	//if (KeyboardTrigger(DIK_F2))
-	//{
-	//	g_mode = MODE_EDIT;
-	//}
+	//デバックフォントの表示非表示
+	if (KeyboardTrigger(DIK_F4) == true)
+	{
+		bDispFont = bDispFont ? false : true;
+	}
 
+#endif 
 }
-//===================
+
+//==========
 // 描画処理
-//===================
+//==========
 void Draw(void)
 {
-	// カメラ取得
-	Camera* pCamera = GetCamera();
-
-	// 画面クリア(バックバッファ&Zバッファのクリア)
-	g_pD3DDevice->Clear(0,
-		NULL,
-		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
-
-	// 描画開始
+	//画面クリア
+	g_pD3DDevice->Clear(0, NULL,
+		                (D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
+		                D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f ,0);
+	//描画開始
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
-	{
-		// 描画成功時
-		//================
-		// 描画処理
-		//================
-			
-		// カメラをセット
-		SetCamera();
-
-		// メッシュの描画
-		DrawMeshfield();
-
-
-		if (g_mode == MODE_EDIT)
+	{//描画開始成功時
+		//-----------------------------
+		//各種オブジェクトの描画処理
+		//-----------------------------
+		switch (g_mode)
 		{
-			DrawCameraPos();
-
-			DebugEditModelInfo();
+		case MODE_TITLE:
+			DrawTitle();
+			break;
+		case MODE_STAGEONE:
+			DrawGame();
+			break;
+		case MODE_STAGETWO:
+			DrawGame();
+			break;
+		case MODE_STAGETHREE:
+			DrawGame();
+			break;
+		case MODE_STAGEFOUR:
+			DrawGame();
+			break;
+		case MODE_BOSSMOVIE:
+			break;
+		case MODE_RESULT:
+			DrawResult();
+			break;
+		case MODE_RANK:
+			DrawRanking();
+			break;
+		default:
+			break;
 		}
-		
-		// デバッグフォント関係
-		DrawFPS();
 
-		// モード切替
-		DrawModeChange();
+#ifdef _DEBUG
 
+		if (bDispFont == true)
+		{
+			DrawPlayerCollision();
+			//DrawEffectEditer();
+			DrawCameraInfo();
+			//DrawPlayerInfo();
+			//DrawTestInfo();
+			//DrawBossInfo();
+		}
 
-		// 描画終了
+#endif // DEBUG
+
+		DrawFade();
+
+		//描画終了
 		g_pD3DDevice->EndScene();
 	}
-
-	// バックバッファとフロントバッファの入れ替え
+	//バックバッファとフロントバッファの入れ替え
 	g_pD3DDevice->Present(NULL, NULL, NULL, NULL);
-
 }
-//======================
-// FPSの表示
-//======================
-void DrawFPS(void)
+
+//==============
+// モードの設定
+//==============
+void SetMode(MODE mode)
 {
-	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
-	char aString[256];
-
-	//文字列に代入
-	wsprintf(&aString[0], "//************************\n// ショートカットキー情報\n//************************\n");
-
-	//テキストの描画
-	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-}
-//========================
-// カメラ表示
-//========================
-void DrawCameraPos(void)
-{
-	// ローカル変数
-	RECT rect = { 0,140,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect1 = { 0,160,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect2 = { 0,60,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect3 = { 0,120,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect4 = { 0,180,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect5 = { 0,200,SCREEN_WIDTH,SCREEN_HEIGHT };
-
-	// 文字列
-	char aString[256];
-	char aString1[256];
-	char aString2[256];
-	char aString3[256];
-	char aString4[64];
-	char aString5[64];
-
-	// カメラの取得
-	Camera* pCamera = GetCamera();
-
-	// 文字列に代入
-	wsprintf(&aString2[0], "//************************\n// カメラ情報\n//************************\n");
-	sprintf(&aString[0],   "[ カメラのrot.y ]: < %.2f >\n", pCamera->rot.y);
-	sprintf(&aString1[0],  "[ カメラのrot.x ]: < %.2f >\n", pCamera->rot.x);
-	wsprintf(&aString3[0], "[ 視点 / 注視点 ] : < Shift + マウス操作 >\n");
-	wsprintf(&aString4[0], "[ ズーム ] :   < マウスホイール >\n");
-	wsprintf(&aString5[0], "[ リセット ] : < マウスホイール押し込み > / TABキー\n");
-
-	// テキスト描画
-	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString1[0], -1, &rect1, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString2[0], -1, &rect2, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString3[0], -1, &rect3, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString4[0], -1, &rect4, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString5[0], -1, &rect5, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-
-}
-//============================
-// エディターモデル関係の表示
-//============================
-void DebugEditModelInfo()
-{
-#if 0
-	// 取得関係
-	int nModel = ReturnEdit(); // 配置カウント
-	MAPMODELINFO* pEdit = MapInfo(); // 配置時の情報
-	EDITMODEL* pModelEdit = GetBlockInfo(pEdit[nModel].mapedit.nType); // モデル情報
-
-	// ローカル変数
-	RECT rect = { 0,220,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect1 = { 0,320,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect2 = { 0,340,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect3 = { 0,360,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect4 = { 0,400,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect5 = { 0,420,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect6 = { 0,440,SCREEN_WIDTH,SCREEN_HEIGHT };
-	RECT rect7 = { 0,480,SCREEN_WIDTH,SCREEN_HEIGHT };
-
-	// 文字列
-	char aString[256];
-	char aString1[256];
-	char aString2[256];
-	char aString3[256];
-	char aString4[256];
-	char aString5[256];
-	char aString6[256];
-	char aString7[256];
-
-	// 文字列に代入
-	wsprintf(&aString[0], "//************************\n// 配置するモデル情報\n//************************\n");
-	sprintf(&aString1[0], "[ モデルのX座標 ] : < %.2f >\n", pEdit[nModel].mapedit.pos.x);
-	sprintf(&aString2[0], "[ モデルのY座標 ] : < %.2f >\n", pEdit[nModel].mapedit.pos.y);
-	sprintf(&aString3[0], "[ モデルのZ座標 ] : < %.2f >\n", pEdit[nModel].mapedit.pos.z);
-	sprintf(&aString4[0], "[ モデルのXの拡大率 ] : < %.2f > \n", pEdit[nModel].mapedit.Scal.x);
-	sprintf(&aString5[0], "[ モデルのYの拡大率 ] : < %.2f >\n", pEdit[nModel].mapedit.Scal.y);
-	sprintf(&aString6[0], "[ モデルのZの拡大率 ] : < %.2f >\n", pEdit[nModel].mapedit.Scal.z);
-	sprintf(&aString7[0], "[ 選択中のモデルの種類 ] : < %s > \n", pModelEdit->FileName);
-
-	// テキスト描画
-	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString1[0], -1, &rect1, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString2[0], -1, &rect2, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString3[0], -1, &rect3, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString4[0], -1, &rect4, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString5[0], -1, &rect5, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString6[0], -1, &rect6, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-	g_pFont->DrawText(NULL, &aString7[0], -1, &rect7, DT_LEFT, D3DCOLOR_RGBA(255, 255, 255, 255));
-#endif
-}
-//==============================
-// モード切替フォントの表示
-//==============================
-void DrawModeChange()
-{
-	// 取得
-	MODE nMode = GetMode();
-
-	// ローカル変数
-	RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
-
-	char aString[256];
-	char aString1[256];
-
-	if (nMode == MODE_EDIT)
-	{// 編集モードなら
-		strcpy(aString1, "編集モード");
+	//現在の画面の終了処理
+	switch (g_mode)
+	{
+	case MODE_TITLE:
+		UninitTitle();
+		break;
+	case MODE_STAGEONE:
+		UninitGame();
+		break;
+	case MODE_STAGETWO:
+		UninitGame();
+		break;
+	case MODE_STAGETHREE:
+		UninitGame();
+		break;
+	case MODE_STAGEFOUR:
+		UninitGame();
+		break;
+	case MODE_BOSSMOVIE:
+		break;
+	case MODE_RESULT:
+		UninitResult();
+		break;
+	case MODE_RANK:
+		UninitRanking();
+		break;
+	default:
+		break;
 	}
-	else if (nMode == MODE_PLAY)
-	{// プレイモードなら
-		strcpy(aString1, "プレイモード");
+	MODE OldMode = g_mode;
+	g_mode = mode;
+
+	//新しい画面の初期化処理
+	switch (mode)
+	{
+	case MODE_TITLE:
+		InitTitle();
+		break;
+	case MODE_STAGEONE:
+		InitGame();
+		break;
+	case MODE_STAGETWO:
+		InitGame();
+		break;
+	case MODE_STAGETHREE:
+		InitGame();
+		break;
+	case MODE_STAGEFOUR:
+		InitGame();
+		break;
+	case MODE_BOSSMOVIE:
+		break;
+	case MODE_RESULT:
+		InitResult(OldMode);
+		break;
+	case MODE_RANK:
+		InitRanking();
+		break;
+	case MODE_END:
+		break;
+	default:
+		break;
 	}
-
-	// 文字列に代入
-	wsprintf(&aString[0], "現在のモード < %s >\n", &aString1[0]);
-
-	// フォントの表示
-	g_pFont->DrawText(NULL, &aString[0], -1, &rect, DT_RIGHT, D3DCOLOR_RGBA(255, 255, 255, 255));
-
 }
-//======================
-// デバイスの取得
-//======================
-LPDIRECT3DDEVICE9 GetDevice(void)
-{
-	return g_pD3DDevice;
-}
-//====================
-// モードの取得
-//====================
+
+//=============
+// モード取得
+//=============
 MODE GetMode(void)
 {
-	return g_mode; // 現在のモードを返す
+	return g_mode;
 }
-//=====================
-// ワイヤーフレームON
-//=====================
+
+//===========================
+//プレイヤーの当たり判定表示
+//===========================
+void DrawPlayerCollision()
+{
+	//PARTICLEEDITER* pEditer = GetParticleInfo();
+	//RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	//char aStr[256];
+	//Player* pPlayer = GetPlayer();
+
+	//// 文字列に代入
+	//sprintf(&aStr[0], "当たっているか:%d\nプレイヤーのポス:%3.2f,%3.2f,%3.2f",pPlayer->btest,pPlayer->pos.x, pPlayer->pos.y, pPlayer->pos.z);
+
+	//// テキスト表示
+	//g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+}
+
+////============================
+////エフェクトエディターの表示
+////============================
+//void DrawEffectEditer()
+//{
+//	PARTICLEEDITER* pEditer = GetParticleInfo();
+//	RECT rect = { 0,40,SCREEN_WIDTH,SCREEN_HEIGHT };
+//	char aStr[256];
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "*****************PARTICLEEDITER*****************\nカラー変更:R,G,B\n放射角変更:X,Y,Z\n粒子の数変更:L\n寿命変更:H\nそれぞれSHIFT押しながらやると減少");
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,160,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "R,G,B:%3.2f,%3.2f,%3.2f\nX,Y,Z:%3.2f,%3.2f,%3.2f\nエフェクトの最大数:%d\nエフェクトの寿命:%d\n粒子の大きさX,Y,Z:%3.2f,%3.2f,%3.2f", pEditer->ParticleInfo.col.r,
+//		pEditer->ParticleInfo.col.g, 
+//		pEditer->ParticleInfo.col.b,
+//		pEditer->ParticleInfo.dir.x,
+//		pEditer->ParticleInfo.dir.y, 
+//		pEditer->ParticleInfo.dir.z,
+//		pEditer->ParticleInfo.forlimit,
+//		pEditer->ParticleInfo.nLife,
+//		pEditer->ParticleInfo.Scale.x,
+//		pEditer->ParticleInfo.Scale.y, 
+//		pEditer->ParticleInfo.Scale.z);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//}
+
+//==================
+//カメラの情報表示
+//==================
+void DrawCameraInfo()
+{
+	Camera* pCamera = GetCamera();
+
+	RECT rect = { 0,260,SCREEN_WIDTH,SCREEN_HEIGHT };
+	char aStr[256];
+
+	// 文字列に代入
+	sprintf(&aStr[0], "*****************カメラ情報*****************");
+
+	// テキスト表示
+	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+
+	rect = { 0,280,SCREEN_WIDTH,SCREEN_HEIGHT };
+
+	// 文字列に代入
+	sprintf(&aStr[0], "カメラの視点の向き:%3.2f,%3.2f,%3.2f", pCamera->rot.x,
+		pCamera->rot.y,
+		pCamera->rot.z);
+
+	// テキスト表示
+	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+
+
+
+}
+
+////======================
+////プレイヤーの情報表示
+////======================
+//void DrawPlayerInfo()
+//{
+//	Player* pPlayer = GetPlayer();
+//
+//	RECT rect = { 0,300,SCREEN_WIDTH,SCREEN_HEIGHT };
+//	char aStr[256];
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "*****************プレイヤー情報*****************");
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,320,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーの向き:%3.2f,%3.2f,%3.2f", pPlayer->rot.x,
+//		pPlayer->rot.y,
+//		pPlayer->rot.z);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,340,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーの目標の向き:%3.2f,%3.2f,%3.2f", pPlayer->rotDest.x,
+//		pPlayer->rotDest.y,
+//		pPlayer->rotDest.z);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,360,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーの位置:%3.2f,%3.2f,%3.2f", pPlayer->pos.x,
+//		pPlayer->pos.y,
+//		pPlayer->pos.z);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,380,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーの昔の位置:%3.2f,%3.2f,%3.2f", pPlayer->posOld.x,
+//		pPlayer->posOld.y,
+//		pPlayer->posOld.z);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,400,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	//// 文字列に代入
+//	//sprintf(&aStr[0], "プレイヤーの次のキー:%d", pPlayer->PlayerMotion.NextKey);
+//
+//		// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーのステータス:%d", pPlayer->state);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,420,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "プレイヤーの今のモーション:%d", pPlayer->PlayerMotion.motionType);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//}
+//void DrawTestInfo()
+//{
+//	D3DXVECTOR2 test = Gettest();
+//	RECT rect = { 0,440,SCREEN_WIDTH,SCREEN_HEIGHT };
+//	char aStr[256];
+//	int *Num = GetNumEnemy();
+//	// 文字列に代入
+//	sprintf(&aStr[0], "敵の総数:%d", *Num);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//}
+//void DrawBossInfo()
+//{
+//	BOSS* pBoss = GetBoss();
+//	D3DXVECTOR2 test = Gettest();
+//	RECT rect = { 0,460,SCREEN_WIDTH,SCREEN_HEIGHT };
+//	char aStr[256];
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "ボスの優先度:%3.2f,%3.2f,%3.2f", pBoss->BossAi.primary[0], 
+//		pBoss->BossAi.primary[1],
+//		pBoss->BossAi.primary[2]);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//
+//	rect = { 0,480,SCREEN_WIDTH,SCREEN_HEIGHT };
+//
+//	// 文字列に代入
+//	sprintf(&aStr[0], "ボスの行動パターン:%d", pBoss->ActionType);
+//
+//	// テキスト表示
+//	g_pFont->DrawText(NULL, &aStr[0], -1, &rect, DT_LEFT, D3DCOLOR_RGBA(200, 255, 0, 255));
+//}
+//=============
+// ワイヤー
+//=============
 void onWireFrame()
 {
 	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 }
-//=====================
-// ワイヤーフレームOFF
-//=====================
-void offWireFrame() 
+void offWireFrame()
 {
 	g_pD3DDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
-//=================================================
-// ウィンドウをフルスクリーンに変える処理
-//=================================================
-void ToggleFullscreen(HWND hWnd)
+
+//*******************************
+// ラジアン値からPIに変換する処理
+//*******************************
+D3DXVECTOR3* PitoRadian(D3DXVECTOR3* rot)
+{
+	// ラジアン値からPIに変換
+	rot->x = rot->x * TOPI;
+	rot->y = rot->y * TOPI;
+	rot->z = rot->z * TOPI;
+
+	// 角度の正規化(X)
+	if (rot->x >= D3DX_PI)
+	{
+		rot->x -= D3DX_PI * 2.0f;
+	}
+	else if (rot->x <= -D3DX_PI)
+	{
+		rot->x += D3DX_PI * 2.0f;
+	}
+	// 角度の正規化(Y)
+	if (rot->y >= D3DX_PI)
+	{
+		rot->y -= D3DX_PI * 2.0f;
+	}
+	else if (rot->y <= -D3DX_PI)
+	{
+		rot->y += D3DX_PI * 2.0f;
+	}
+	// 角度の正規化(Z)
+	if (rot->z >= D3DX_PI)
+	{
+		rot->z -= D3DX_PI * 2.0f;
+	}
+	else if (rot->z <= -D3DX_PI)
+	{
+		rot->z += D3DX_PI * 2.0f;
+	}
+
+	return rot;
+}
+//****************************************
+// ウィンドウをフルスクリーンにする処理
+//****************************************
+void ToggleFullScreen(HWND hWnd)
 {
 	// 現在のウィンドウスタイルを取得
 	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
-
 	if (g_isFullscreen)
 	{
 		// ウィンドウモードに切り替え
@@ -693,7 +852,98 @@ void ToggleFullscreen(HWND hWnd)
 			SWP_FRAMECHANGED | SWP_NOACTIVATE);
 		ShowWindow(hWnd, SW_MAXIMIZE);
 	}
-
 	g_isFullscreen = !g_isFullscreen;
 }
 
+//*****************
+// テクスチャの破棄
+//*****************
+void UninitTexture(LPDIRECT3DTEXTURE9 &Texture)
+{
+	if (Texture != NULL)
+	{
+		Texture->Release();
+		Texture = NULL;
+	}
+}
+
+//*********************
+// 頂点バッファーの破棄
+//*********************
+
+void UninitBuffer(LPDIRECT3DVERTEXBUFFER9 &Buffer)
+{
+	if (Buffer != NULL)
+	{
+		Buffer->Release();
+		Buffer = NULL;
+	}
+}
+//***************
+// メッシュの破棄
+//***************
+
+void UninitMesh(LPD3DXMESH &Mesh)
+{
+	//メッシュの破棄
+	if (Mesh != NULL)
+	{
+		Mesh->Release();
+		Mesh = NULL;
+	}
+}
+void UninitBuffMat(LPD3DXBUFFER &Buffer)
+{
+	//マテリアルの破棄
+	if (Buffer != NULL)
+	{
+		Buffer->Release();
+		Buffer = NULL;
+	}
+}
+//***************************
+// インデックスバッファの破棄
+//***************************
+void UninitIndxBuffer(LPDIRECT3DINDEXBUFFER9 &IndxBuffer)
+{
+	if (IndxBuffer != NULL)
+	{
+		IndxBuffer->Release();
+		IndxBuffer = NULL;
+	}
+}
+
+//********************
+// 1次元ベクトルを引く
+//********************
+float Vector(float StartPoint, float EndPoint)
+{
+	return EndPoint - StartPoint;
+}
+
+//*************************
+// 2Dベクトルの角度を求める
+//*************************
+float Angle(D3DXVECTOR2 Vec)
+{
+	return atan2f(Vec.x, Vec.y);
+}
+
+//*********************
+// 角度の近道を見つける
+//*********************
+void NearRot(float Angle, float& OutAngle)
+{
+	// 角度の近道
+	if (Angle >= D3DX_PI) SetAngle(OutAngle += D3DX_PI * 2.0f,OutAngle);
+	// 角度の近道
+	else if (Angle <= -D3DX_PI) SetAngle(OutAngle -= D3DX_PI * 2.0f,OutAngle);
+}
+
+//*****************************
+// 現在の向きを設定
+//*****************************
+void SetAngle(float fAngle, float& OutAngle)
+{
+	OutAngle = fAngle;
+}

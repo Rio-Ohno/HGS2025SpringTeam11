@@ -1,88 +1,103 @@
-//====================================
+//==============================
 //
-// サンプルモデルビューワー [main.h]
-// Author: Rio Ohno
+//　ウインドウ表示処理[main.h]
+//　Author:kaiti
 //
-//=====================================
+//==============================
+#ifndef _MAIN_H_
+#define _MAIN_H_
 
-#ifndef _MAIN_H_ // このマクロ定義がされてなかったら
-#define _MAIN_H_ // 2重インクルード防止のマクロ定義
+#include<Windows.h>
+#include "d3dx9.h"
 
-// インクルードファイル宣言
-#include <windows.h>
-#define DIRECTINPUT_VERSION (0x0800)// ビルド時警告対処用のマクロ
-#include "d3dx9.h"					// 描画処理に必要
-#include "dinput.h"					// 入力処理に必要
-#include "Xinput.h"					// ジョイパッド処理に必要
+#include<stdio.h>
+
+#define DIRECTINPUT_VERSION (0x0800)
+#include "dinput.h"
+#include "Xinput.h"
 #include "xaudio2.h"
 
-// ライブラリのリンク宣言
-#pragma comment(lib,"d3d9.lib")		// 描画処理に必要
-#pragma comment(lib,"d3dx9.lib")	// [d3d9.lib]の拡張ライブラリ
-#pragma comment(lib,"dxguid.lib")	// DirectXコンポーネント(部品)使用に必要
-#pragma comment(lib, "dinput8.lib")
-#pragma comment(lib,"xinput.lib")	// ジョイパッド処理に必要
-#pragma comment(lib,"Winmm.lib")
+#include<time.h>
+#include "string.h"
+#include "stdlib.h"
+//ライブラリのリンク
+#pragma comment(lib,"d3d9.lib")
+#pragma comment(lib,"d3dx9.lib")
+#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"winmm.lib")
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"xinput.lib")
 
-// マクロ定義
-#define CLASS_NAME "WindowClass"          // ウインドウクラスの名前
-#define WINDOW_NAME "実験"	  // ウインドウの名前(キャプションに表示)
-#define SCREEN_WIDTH (1280)               // ウインドウの幅
-#define SCREEN_HEIGHT (720)               // ウインドウの高さ
-#define FVF_VERTEX_2D (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1) // 頂点フォーマット[2D]
-#define FVF_VERTEX_3D (D3DFVF_XYZ | D3DFVF_NORMAL |  D3DFVF_DIFFUSE | D3DFVF_TEX1) // 座標,法線,カラー,テクスチャ
-#define FVF_VERTEX_3D_MULTI (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX2) // 座標,法線,カラー,マルチテクスチャ
+//マクロ定義
+#define CLASS_NAME "WindowsClass"
+#define WINDOW_NAME "DEVASTATED CITY"
+#define SCREEN_WIDTH (1280)
+#define SCREEN_HEIGHT (720)
+#define FVF_VERTEX_2D (D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1)
+#define FVF_VERTEX_3D (D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_DIFFUSE | D3DFVF_TEX1)//座標・法線・カラー・テクスチャ
+#define MAX_WORD (4096)
+#define TOPI (float)(0.0174f)
 
-// 頂点情報[2D]の構造体
+//頂点情報(2D)の構造体
 typedef struct
 {
-	D3DXVECTOR3 pos;	// 頂点座標
-	float rhw;			// 座標変換用係数(1.0fで固定)
-	D3DCOLOR col;		// 頂点カラー
-	D3DXVECTOR2 tex;	// テクスチャ座標
+	D3DXVECTOR3 pos;//頂点座標
+	float rhw;      //座標変換用係数
+	D3DCOLOR col;   //頂点カラー
+	D3DXVECTOR2 tex;//テクスチャ座標
 }VERTEX_2D;
 
-// 頂点情報[3D]の構造体
+//頂点情報(3D)の構造体
 typedef struct
 {
-	D3DXVECTOR3 pos;	// 頂点座標
-	D3DXVECTOR3 nor;	// 法線ベクトル
-	D3DCOLOR col;		// 頂点カラー
-	D3DXVECTOR2 tex;	// テクスチャ座標
+	D3DXVECTOR3 pos;//頂点座標
+	D3DXVECTOR3 nor;//法線ベクトル
+	D3DCOLOR col;   //頂点カラー
+	D3DXVECTOR2 tex;//テクスチャ座標
 }VERTEX_3D;
 
-// 頂点情報[3D_マルチ]の構造体
-typedef struct
-{
-	D3DXVECTOR3 pos;	// 頂点座標
-	D3DXVECTOR3 nor;	// 法線ベクトル
-	D3DCOLOR col;		// 頂点カラー
-	D3DXVECTOR2 tex;	// テクスチャ座標
-	D3DXVECTOR2 texM;	// マルチテクスチャ
-}VERTEX_3D_MULTI;
-
-// モードの種類
 typedef enum
 {
-	MODE_TITLE = 0,		// タイトル
-	MODE_TUTORIAL,		// チュートリアル
-	MODE_GAME,			// ゲーム
-	MODE_RESULT,		// リザルト
-	MODE_EDIT,			// エディット
-	MODE_RANKING,		// ランキング
-	MODE_PLAY,			// プレイモード
-	MODE_MAX,
+	MODE_TITLE = 0,
+	MODE_STAGEONE,
+	MODE_STAGETWO,
+	MODE_STAGETHREE,
+	MODE_BOSSMOVIE,
+	MODE_STAGEFOUR,
+	MODE_RESULT,
+	MODE_RANK,
+	MODE_END,
+	MODE_MAX
 }MODE;
 
-// プロトタイプ宣言
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);	//　ウィンドウプロシージャ
-HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);							//　初期化処理
-void Uninit(void);																	//　終了処理
-void Update(void);																	//　更新処理
-void Draw(void);																	//　描画処理
-LPDIRECT3DDEVICE9 GetDevice(void);													//　デバイスの取得
-MODE GetMode(void);																	//　モードの取得
-void DrawFPS(void);																	//　デバッグ表示
+//プロトタイプ宣言
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
+void Uninit(void);
+void Update(void);
+void Draw(void);
+void DrawPlayerCollision();
+void DrawEffectEditer();
+void onWireFrame();
+void offWireFrame();
+void SetMode(MODE mode);
+MODE GetMode(void);
+LPDIRECT3DDEVICE9 GetDevice(void);
+D3DXVECTOR3 *PitoRadian(D3DXVECTOR3 *rot);		// ラジアン値からPIに変換する処理
+void DrawCameraInfo();
+void DrawPlayerInfo();
+void DrawTestInfo();
+void DrawBossInfo();
+void UninitTexture(LPDIRECT3DTEXTURE9 &Texture);
+void UninitBuffer(LPDIRECT3DVERTEXBUFFER9 &Buffer);
+void UninitMesh(LPD3DXMESH &Mesh);
+void UninitBuffMat(LPD3DXBUFFER &Buffer);
+void UninitIndxBuffer(LPDIRECT3DINDEXBUFFER9 &IndxBuffer);
 
-
+// 計算系の関数
+float Vector(float StartPoint, float EndPoint);
+float Angle(D3DXVECTOR2 Vec);
+void NearRot(float Angle,float &OutAngle);
+// 実作業系の関数
+void SetAngle(float fAngle,float &OutAngle);
 #endif
