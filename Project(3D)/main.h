@@ -86,6 +86,8 @@ void UninitBuffer(LPDIRECT3DVERTEXBUFFER9 &Buffer);
 void UninitMesh(LPD3DXMESH &Mesh);
 void UninitBuffMat(LPD3DXBUFFER &Buffer);
 void UninitIndxBuffer(LPDIRECT3DINDEXBUFFER9 &IndxBuffer);
+void DrawEditBlock(int File, D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, int nType, int nTotal);
+
 
 // åvéZånÇÃä÷êî
 float Vector(float StartPoint, float EndPoint);
