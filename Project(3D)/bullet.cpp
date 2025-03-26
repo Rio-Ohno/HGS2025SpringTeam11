@@ -155,7 +155,6 @@ void UpdateBullet()
 		{//弾が使用されているとき
 
 			Player* pPlayer;																//プレイヤーへのポインタ
-			int nCntEnemy;
 
 			//前の位置の保存
 			g_aBullet[nCntBullet].oldpos = g_aBullet[nCntBullet].pos;
@@ -190,7 +189,9 @@ void UpdateBullet()
 				}
 			}
 		}
-		
+		g_aBullet[nCntBullet].move.y = g_aBullet[nCntBullet].move.y * sinf(g_aBullet[nCntBullet].rot.z);
+		g_aBullet[nCntBullet].move.x = g_aBullet[nCntBullet].move.x * cosf(g_aBullet[nCntBullet].rot.z);
+
 		//弾の位置更新
 		g_aBullet[nCntBullet].pos.y += g_aBullet[nCntBullet].move.y;
 		g_aBullet[nCntBullet].pos.x += g_aBullet[nCntBullet].move.x;
@@ -215,6 +216,18 @@ void UpdateBullet()
 		if (g_aBullet[nCntBullet].pos.x<=0.0f|| g_aBullet[nCntBullet].pos.x >= SCREEN_WIDTH
 			                                  || g_aBullet[nCntBullet].pos.y <= 0.0f|| g_aBullet[nCntBullet].pos.y >= SCREEN_HEIGHT)//弾が画面外にでた
 		{
+			g_aBullet[nCntBullet].rot.z += D3DX_PI;
+
+			//目標の移動方向（角度）の補正
+			if (g_aBullet[nCntBullet].rot.z > D3DX_PI)
+			{
+				g_aBullet[nCntBullet].rot.z -= D3DX_PI * 2.0f;
+			}
+			else if (g_aBullet[nCntBullet].rot.z < -D3DX_PI)
+			{
+				g_aBullet[nCntBullet].rot.z += D3DX_PI * 2.0f;
+			}
+
 			//g_aBullet[nCntBullet].bUse = false;//使用していない状態にする
 			//nNumBullet--;
 		}
@@ -285,6 +298,16 @@ void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 move, D3DXVECTOR3 rot, float fLength
 			g_aBullet[nCntBullet].fLife = fLife;
 			g_aBullet[nCntBullet].user = user;
 			g_aBullet[nCntBullet].type = type;
+
+			//目標の移動方向（角度）の補正
+			if (g_aBullet[nCntBullet].rot.z > D3DX_PI)
+			{
+				g_aBullet[nCntBullet].rot.z -= D3DX_PI * 2.0f;
+			}
+			else if (g_aBullet[nCntBullet].rot.z < -D3DX_PI)
+			{
+				g_aBullet[nCntBullet].rot.z += D3DX_PI * 2.0f;
+			}
 
 			//頂点座標の設定
 			pVtx[0].pos.x = g_aBullet[nCntBullet].pos.x + sinf(g_aBullet[nCntBullet].rot.z - (D3DX_PI - g_aBullet[nCntBullet].fAngleBullet)) * (g_aBullet[nCntBullet].fLengthBullet / 5);

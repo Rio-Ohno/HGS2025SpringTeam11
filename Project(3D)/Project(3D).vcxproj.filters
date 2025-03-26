@@ -36,6 +36,15 @@
     <ClCompile Include="debugproc.cpp">
       <Filter>OR</Filter>
     </ClCompile>
+    <ClCompile Include="edit.cpp">
+      <Filter>ST</Filter>
+    </ClCompile>
+    <ClCompile Include="stage.cpp">
+      <Filter>ST</Filter>
+    </ClCompile>
+    <ClCompile Include="block.cpp">
+      <Filter>ST</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -64,6 +73,15 @@
     </ClInclude>
     <ClInclude Include="debugproc.h">
       <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="edit.h">
+      <Filter>ST</Filter>
+    </ClInclude>
+    <ClInclude Include="stage.h">
+      <Filter>ST</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+      <Filter>ST</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
