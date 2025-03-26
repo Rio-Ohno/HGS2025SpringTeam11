@@ -5,6 +5,7 @@
 //
 //================================
 #include "main.h"
+#include "block.h"
 #include "input.h"
 #include "sound.h"
 #include "player.h"
@@ -311,6 +312,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	//弾の初期化
 	InitBullet();
+	SetBullet(D3DXVECTOR3(640.0f,360.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f),30.0f,100.0f);
 
 	g_bEdit = false;
 	return S_OK;
@@ -564,4 +566,44 @@ void NearRot(float Angle, float& OutAngle)
 void SetAngle(float fAngle, float& OutAngle)
 {
 	OutAngle = fAngle;
+}
+
+//*****************************
+// プレイヤーデバッグ
+//*****************************
+void DrawEditBlock(int File, D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, int nType, int nTotal)
+{
+	RECT rectFile = { 0, 30 * 1, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectPos = { 0, 30 * 3, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectMove = { 0, 30 * 4, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectWidth = { 0, 30 * 5, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectHeight = { 0, 30 * 6, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectType = { 0, 30 * 7, SCREEN_WIDTH, SCREEN_HEIGHT };
+	RECT rectTotal = { 0, 30 * 8, SCREEN_WIDTH, SCREEN_HEIGHT };
+
+	char aStrFile[128];
+	char aStrPos[128];
+	char aStrMove[128];
+	char aStrWidth[128];
+	char aStrHeight[128];
+	char aStrType[128];
+	char aStrTotal[128];
+
+	sprintf(&aStrFile[0], "F1 タイトル F2 ゲームへ F5 リセット\nTEXT_FILE data/STAGE/stage%d.txt NロードBセーブ OPで数値変更\n", File);
+	sprintf(&aStrPos[0], "BLOCK_POS:%.2f %.2f WASDで移動\n", pos.x, pos.y);
+	sprintf(&aStrMove[0], "BLOCK_MOVE:%.2f %.2f X軸ZX Y軸CVで変更\n", move.x, move.y);
+	sprintf(&aStrWidth[0], "BLOCK_WIDTH:%.2f 横に%.1f個分 ←→で変更\n", fWidth, fWidth / WIDTHBLOCK);
+	sprintf(&aStrHeight[0], "BLOCK_HEIGHT:%.2f 縦に%.1f個分 ↑↓で変更\n", fHeight, fHeight / HEIGHTBLOCK);
+	sprintf(&aStrType[0], "BLOCK_TYPE:%d Q Eで変更\n", nType);
+	sprintf(&aStrTotal[0], "BLOCK_TOTAL:%d/%d\n", nTotal, MAX_BLOCK);
+
+
+	g_pFont->DrawTextA(NULL, &aStrFile[0], -1, &rectFile, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrPos[0], -1, &rectPos, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrMove[0], -1, &rectMove, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrWidth[0], -1, &rectWidth, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrHeight[0], -1, &rectHeight, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrType[0], -1, &rectType, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+	g_pFont->DrawTextA(NULL, &aStrTotal[0], -1, &rectTotal, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
+
 }

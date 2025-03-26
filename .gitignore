@@ -31,3 +31,10 @@
 *.out
 *.app
 /.vs
+/Project(3D)/Debug/*.log
+/Project(3D)/Debug/*.ilk
+/Project(3D)/Debug/*.recipe
+/Project(3D)/*.user
+/Project(3D)/Debug/Project(3D).tlog
+/Project(3D)/Debug/*.pdb
+/Project(3D)/Debug/*.idb

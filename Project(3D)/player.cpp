@@ -10,13 +10,6 @@
 #include"bullet.h"
 //#include"exploosion.h"
 
-//マクロ定義
-#define MAX_SIZE (400.0f)                                                       //ポリゴンの最大(対角線)
-#define MIN_SIZE (50.0f)                                                        //ポリゴンの最小(対角線)
-#define NUM_WIDTH (60)											                //ポリゴンの幅
-#define NUM_HEIGHT (20)	                                                        //ポリゴンの高さ
-#define PLAYERLIFE (1000.0f)													//プレイヤーのライフ
-
 //グローバル変数宣言
 LPDIRECT3DTEXTURE9 g_pTexturePlayer = NULL;                                     //テクスチャへのポインタ
 LPDIRECT3DTEXTURE9 g_pTexturePlayerPos = NULL;                                  //テクスチャへのポインタ
@@ -168,8 +161,8 @@ void UpdatePlayer()
 		g_Player.pos.y += g_Player.move.y;
 
 		//移動量を更新（減衰）
-		g_Player.move.x += (0.0f - g_Player.move.x) * 0.08f;
-		g_Player.move.y += (0.0f - g_Player.move.y) * 0.08f;//あんまりいらないから数字でかめにしてる
+		g_Player.move.x += (0.0f - g_Player.move.x) * 0.09f;
+		g_Player.move.y += (0.0f - g_Player.move.y) * 0.09f;//あんまりいらないから数字でかめにしてる
 
 		//画面外に出ないようにする処理
 		if ((g_Player.pos.x + sinf(g_Player.rot.z - (D3DX_PI - g_Player.fAngle)) * g_Player.fLength) < 0.0f)
@@ -289,6 +282,7 @@ void ActionPlayer()
 {
 	if (GetKeyboardPress(DIK_A) == true || GetJoypadPress(JOYKEY_LEFT) == true)
 	{
+#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキー||上（ゲームパッド）が押された
 			g_Player.move.y += cosf(-D3DX_PI * 0.75f) * 0.5f;
@@ -303,10 +297,17 @@ void ActionPlayer()
 		{//Aキー||左（ゲームパッド）だけ
 			g_Player.move.x -= 0.5f;
 		}
+#endif
+#ifdef _RELEASE
+		if (GetKeyboardPress(DIK_A))
+		{
+			g_Player.move.x -= 0.5f;
+		}
+#endif
 	}
 	else if (GetKeyboardPress(DIK_D) == true || GetJoypadPress(JOYKEY_RIGHT) == true)
 	{//Dキーが押された
-
+#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキーが押された
 			g_Player.move.y += cosf(D3DX_PI * 0.75f) * 0.5f;
@@ -321,7 +322,17 @@ void ActionPlayer()
 		{//Dキーだけ
 			g_Player.move.x += 0.5f;
 		}
+#endif
+#ifdef _RELEASE
+		if (GetKeyboardPress(DIK_D) == true)
+		{//Dキーだけ
+			g_Player.move.x += 0.5f;
+		}
+#endif // 
+
+
 	}
+#ifdef _DEBUG
 	else if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 	{//Wキーが押された
 		g_Player.move.y -= 0.5f;
@@ -330,11 +341,12 @@ void ActionPlayer()
 	{//sキーが押された
 		g_Player.move.y += 0.5f;
 	}
-
 	if (KeyboardTrigger(DIK_SPACE) == true || GetJoypadPress(JOYKEY_X) == true)
 	{//スペースキー||Xキー（ゲームパッド）
-		SetBullet(g_Player.pos, D3DXVECTOR3(sinf(g_Player.rot.z + D3DX_PI) * 7.5f, cosf(g_Player.rot.z + D3DX_PI) * 7.5f, 0.0f), g_Player.rot, g_Player.fLength, 100,BULLETUSER_PLAYER, BULLETTYPE_NULL);
+		SetBullet(g_Player.pos, g_Player.rot, g_Player.fLength, 100);
 	}
+#endif
+
 }
 
 //=============================================================================================================

@@ -36,6 +36,7 @@
     <ClCompile Include="debugproc.cpp">
       <Filter>OR</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\..\KTR\block.cpp">
       <Filter>ST</Filter>
     </ClCompile>
@@ -43,6 +44,15 @@
       <Filter>ST</Filter>
     </ClCompile>
     <ClCompile Include="..\..\KTR\stage.cpp">
+=======
+    <ClCompile Include="edit.cpp">
+      <Filter>ST</Filter>
+    </ClCompile>
+    <ClCompile Include="stage.cpp">
+      <Filter>ST</Filter>
+    </ClCompile>
+    <ClCompile Include="block.cpp">
+>>>>>>> 8f39fc787292fcc8b6ae9db3c3a5cb99de3035d5
       <Filter>ST</Filter>
     </ClCompile>
   </ItemGroup>
@@ -74,6 +84,7 @@
     <ClInclude Include="debugproc.h">
       <Filter>OR</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="..\..\KTR\block.h">
       <Filter>ST</Filter>
     </ClInclude>
@@ -81,6 +92,15 @@
       <Filter>ST</Filter>
     </ClInclude>
     <ClInclude Include="..\..\KTR\stage.h">
+=======
+    <ClInclude Include="edit.h">
+      <Filter>ST</Filter>
+    </ClInclude>
+    <ClInclude Include="stage.h">
+      <Filter>ST</Filter>
+    </ClInclude>
+    <ClInclude Include="block.h">
+>>>>>>> 8f39fc787292fcc8b6ae9db3c3a5cb99de3035d5
       <Filter>ST</Filter>
     </ClInclude>
   </ItemGroup>
