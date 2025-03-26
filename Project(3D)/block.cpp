@@ -477,7 +477,7 @@ bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove
 					}
 					else if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
 					{
-						pBullet->oldpos.y = 100.0f - 40.0f + 5.0f;
+						pBullet->oldpos.y = 880.0f - 40.0f + 5.0f;
 						pBullet->oldpos.x -= 520.0f;
 
 						pBullet->pos.y = 880.0f - 40.0f + 5.0f;

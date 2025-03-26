@@ -319,7 +319,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	//弾の初期化
 	InitBullet();
-	SetBullet(D3DXVECTOR3(640.0f,360.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f),30.0f,100.0f);
+	SetBullet(D3DXVECTOR3(1320.0f,260.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f),30.0f,100.0f);
 
 	g_bEdit = false;
 	return S_OK;
@@ -618,3 +618,85 @@ void DrawEditBlock(int File, D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, fl
 	g_pFont->DrawTextA(NULL, &aStrTotal[0], -1, &rectTotal, DT_LEFT, D3DCOLOR_RGBA(255, 0, 0, 255));
 
 }
+
+//=============
+// モード取得
+//=============
+MODE GetMode(void)
+{
+	return g_mode;
+}
+
+//==============
+// モードの設定
+//==============
+void SetMode(MODE mode)
+{
+	////現在の画面の終了処理
+	//switch (g_mode)
+	//{
+	//case MODE_TITLE:
+	//	UninitTitle();
+	//	break;
+	//case MODE_STAGEONE:
+	//	UninitGame();
+	//	break;
+	//case MODE_STAGETWO:
+	//	UninitGame();
+	//	break;
+	//case MODE_STAGETHREE:
+	//	UninitGame();
+	//	break;
+	//case MODE_STAGEFOUR:
+	//	UninitGame();
+	//	break;
+	//case MODE_BOSSMOVIE:
+	//	UninitBossMovie();
+	//	break;
+	//case MODE_RESULT:
+	//	UninitResult();
+	//	break;
+	//case MODE_RANK:
+	//	UninitRanking();
+	//	break;
+	//default:
+	//	break;
+	//}
+	//MODE OldMode = g_mode;
+	//g_mode = mode;
+
+	////新しい画面の初期化処理
+	//switch (mode)
+	//{
+	//case MODE_TITLE:
+	//	InitTitle();
+	//	break;
+	//case MODE_STAGEONE:
+	//	InitGame();
+	//	break;
+	//case MODE_STAGETWO:
+	//	InitGame();
+	//	break;
+	//case MODE_STAGETHREE:
+	//	InitGame();
+	//	break;
+	//case MODE_STAGEFOUR:
+	//	InitGame();
+	//	break;
+	//case MODE_BOSSMOVIE:
+	//	InitBossMovie();
+	//	break;
+	//case MODE_RESULT:
+	//	InitResult(OldMode);
+	//	break;
+	//case MODE_RANK:
+	//	InitRanking();
+	//	break;
+	//case MODE_END:
+	//	break;
+	//default:
+	//	break;
+	//}
+}
+
+

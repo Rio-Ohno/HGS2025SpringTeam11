@@ -43,7 +43,7 @@ void InitPlayer()
 	g_nCounterAnimPlayer = 0;													//カウンターを初期化する
 	g_nPatternAnimPlayer = 0;													//パターンNO.を初期化する
 
-	g_Player.pos = D3DXVECTOR3(640.0f,625.0f,0);								//位置を初期化する
+	g_Player.pos = D3DXVECTOR3(1320.0f,625.0f,0);								//位置を初期化する
 	g_Player.move = D3DXVECTOR3(0.0f,0.0f,0.0f);								//移動量を初期化する
 	g_Player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);								//向きを初期化する
 	g_Player.state = PLAYERSTATE_NORMAL;										//敵の状態の初期化
