@@ -24,6 +24,7 @@
     <ProjectGuid>{69311762-e0cb-411d-b7b3-f611c982d510}</ProjectGuid>
     <RootNamespace>Project3D</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>longnoid</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
