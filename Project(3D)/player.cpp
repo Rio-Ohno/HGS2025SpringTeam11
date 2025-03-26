@@ -282,6 +282,7 @@ void ActionPlayer()
 {
 	if (GetKeyboardPress(DIK_A) == true || GetJoypadPress(JOYKEY_LEFT) == true)
 	{
+#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキー||上（ゲームパッド）が押された
 			g_Player.move.y += cosf(-D3DX_PI * 0.75f) * 0.5f;
@@ -296,10 +297,17 @@ void ActionPlayer()
 		{//Aキー||左（ゲームパッド）だけ
 			g_Player.move.x -= 0.5f;
 		}
+#endif
+#ifdef _RELEASE
+		if (GetKeyboardPress(DIK_A))
+		{
+			g_Player.move.x -= 0.5f;
+		}
+#endif
 	}
 	else if (GetKeyboardPress(DIK_D) == true || GetJoypadPress(JOYKEY_RIGHT) == true)
 	{//Dキーが押された
-
+#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキーが押された
 			g_Player.move.y += cosf(D3DX_PI * 0.75f) * 0.5f;
@@ -314,7 +322,17 @@ void ActionPlayer()
 		{//Dキーだけ
 			g_Player.move.x += 0.5f;
 		}
+#endif
+#ifdef _RELEASE
+		if (GetKeyboardPress(DIK_D) == true)
+		{//Dキーだけ
+			g_Player.move.x += 0.5f;
+		}
+#endif // 
+
+
 	}
+#ifdef _DEBUG
 	else if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 	{//Wキーが押された
 		g_Player.move.y -= 0.5f;
@@ -323,11 +341,12 @@ void ActionPlayer()
 	{//sキーが押された
 		g_Player.move.y += 0.5f;
 	}
-
 	if (KeyboardTrigger(DIK_SPACE) == true || GetJoypadPress(JOYKEY_X) == true)
 	{//スペースキー||Xキー（ゲームパッド）
 		SetBullet(g_Player.pos, g_Player.rot, g_Player.fLength, 100);
 	}
+#endif
+
 }
 
 //=============================================================================================================
