@@ -7,6 +7,7 @@
 #include "stage.h"
 #include "block.h"
 #include "player.h"
+#include <stdio.h>
 
 Stage g_stage[MAX_STAGE];
 int g_nowstage;
@@ -54,7 +55,7 @@ void LoadStage(int nStage)
 	//	sprintf(stagefilename, "data/STAGE/Yamada/stage%d.txt", nStage);
 	//}
 
-	pFile = fopen(stagefilename, "r");
+	pFile = fopen("data\\STAGE\\stage1.txt", "r");
 
 	if (pFile != NULL)
 	{

@@ -9,7 +9,6 @@
 //#include"exploosion.h"
 #include"player.h"
 #include"score.h"
-#include"block.h"
 
 //グローバル変数
 LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;				   //テクスチャへのポインタ
@@ -40,6 +39,7 @@ void InitBullet(void)
 		g_aBullet[nCntBullet].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//位置の初期化
 		g_aBullet[nCntBullet].move = D3DXVECTOR3(-BULLET_SPEED*0.5f, BULLET_SPEED, 0.0f);									//移動量の初期化
 		g_aBullet[nCntBullet].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//角度の初期化
+		g_aBullet[nCntBullet].pBlock = NULL;
 
 		//対角線の長さを算出する
 		g_aBullet[nCntBullet].fLengthBullet = sqrtf(BULLET_WIDTH * BULLET_WIDTH + BULLET_HEIGHT * BULLET_HEIGHT) / 2.0f;
@@ -176,6 +176,8 @@ void UpdateBullet()
 		g_aBullet[nCntBullet].pos.y += g_aBullet[nCntBullet].move.y;
 		g_aBullet[nCntBullet].pos.x += g_aBullet[nCntBullet].move.x;
 
+		CollisionBlockY(&g_aBullet[nCntBullet].pos, &g_aBullet[nCntBullet].oldpos, &g_aBullet[nCntBullet].move, 0, 0, &g_aBullet[nCntBullet].pBlock);
+		CollisionBlockX(&g_aBullet[nCntBullet].pos, &g_aBullet[nCntBullet].oldpos, &g_aBullet[nCntBullet].move, 0, 0, &g_aBullet[nCntBullet].pBlock);
 
 		//頂点座標の設定
 		pVtx[0].pos.x = g_aBullet[nCntBullet].pos.x + sinf(g_aBullet[nCntBullet].rot.z - (D3DX_PI - g_aBullet[nCntBullet].fAngleBullet)) * (g_aBullet[nCntBullet].fLengthBullet / 5);

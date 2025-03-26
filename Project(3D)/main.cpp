@@ -12,6 +12,7 @@
 #include <crtdbg.h>
 #include <stdio.h>
 #include "bullet.h"
+#include "stage.h"
 
 //グローバル変数宣言
 LPDIRECT3D9 g_pD3D = NULL;
@@ -307,6 +308,12 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//サウンドの初期化処理
 	InitSound(hWnd);
 
+	InitBlock();
+
+	//ステージの初期化
+	InitStage();
+	LoadStage(0);
+
 	//プレイヤーの初期化
 	InitPlayer();
 
@@ -328,6 +335,8 @@ void Uninit(void)
 	//----------------------------
 	//サウンドの終了処理
 	UninitSound();
+	UninitBlock();
+	UninitStage();
 
 	UninitKeyboard();
 
@@ -377,7 +386,8 @@ void Update(void)
 	else
 	{
 		////ブロック
-		//UpdateBlock();
+		UpdateBlock();
+		UpdateStage();
 
 		//プレイヤー
 		UpdatePlayer();
@@ -421,6 +431,7 @@ void Draw(void)
 
 		if (g_bEdit == false)
 		{
+			DrawBlock();
 			//プレイヤーの描画処理
 			DrawPlayer();
 

@@ -142,9 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\KTR\block.cpp" />
-    <ClCompile Include="..\..\KTR\edit.cpp" />
-    <ClCompile Include="..\..\KTR\stage.cpp" />
     <ClCompile Include="backgraund.cpp" />
     <ClCompile Include="block.cpp" />
     <ClCompile Include="bullet.cpp" />
@@ -159,9 +156,6 @@
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\KTR\block.h" />
-    <ClInclude Include="..\..\KTR\edit.h" />
-    <ClInclude Include="..\..\KTR\stage.h" />
     <ClInclude Include="backgraund.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="bullet.h" />

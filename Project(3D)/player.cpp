@@ -8,7 +8,10 @@
 #include"player.h"
 #include"input.h"
 #include"bullet.h"
-//#include"exploosion.h"
+//#include"exploosion.h
+
+//マクロ
+#define PLAYER_SPEED ((float)1.0f)
 
 //グローバル変数宣言
 LPDIRECT3DTEXTURE9 g_pTexturePlayer = NULL;                                     //テクスチャへのポインタ
@@ -95,10 +98,10 @@ void InitPlayer()
 	pVtx[3].rhw = 1.0f;
 
 	//頂点カラーの設定
-	pVtx[0].col = D3DCOLOR_RGBA(255, 255, 255, 200);
-	pVtx[1].col = D3DCOLOR_RGBA(255, 255, 255, 200);
-	pVtx[2].col = D3DCOLOR_RGBA(255, 255, 255, 200);
-	pVtx[3].col = D3DCOLOR_RGBA(255, 255, 255, 200);
+	pVtx[0].col = D3DCOLOR_RGBA(100, 255, 255, 255);
+	pVtx[1].col = D3DCOLOR_RGBA(100, 255, 255, 255);
+	pVtx[2].col = D3DCOLOR_RGBA(100, 255, 255, 255);
+	pVtx[3].col = D3DCOLOR_RGBA(100, 255, 255, 255);
 
 	//テクスチャ座標の設定
 	pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
@@ -285,23 +288,23 @@ void ActionPlayer()
 #ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキー||上（ゲームパッド）が押された
-			g_Player.move.y += cosf(-D3DX_PI * 0.75f) * 0.5f;
-			g_Player.move.x += sinf(-D3DX_PI * 0.75f) * 0.5f;
+			g_Player.move.y += cosf(-D3DX_PI * 0.75f) * PLAYER_SPEED;
+			g_Player.move.x += sinf(-D3DX_PI * 0.75f) * PLAYER_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_S) == true || GetJoypadPress(JOYKEY_DOWN) == true)
 		{//Sキー||下（ゲームパッド）が押された
-			g_Player.move.y += cosf(-D3DX_PI * 0.25) * 0.5f;
-			g_Player.move.x += sinf(-D3DX_PI * 0.25f) * 0.5f;
+			g_Player.move.y += cosf(-D3DX_PI * 0.25) * PLAYER_SPEED;
+			g_Player.move.x += sinf(-D3DX_PI * 0.25f) * PLAYER_SPEED;
 		}
 		else
 		{//Aキー||左（ゲームパッド）だけ
-			g_Player.move.x -= 0.5f;
+			g_Player.move.x -= PLAYER_SPEED;
 		}
 #endif
 #ifdef _RELEASE
 		if (GetKeyboardPress(DIK_A))
 		{
-			g_Player.move.x -= 0.5f;
+			g_Player.move.x -= PLAYER_SPEED;
 		}
 #endif
 	}
@@ -310,23 +313,23 @@ void ActionPlayer()
 #ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキーが押された
-			g_Player.move.y += cosf(D3DX_PI * 0.75f) * 0.5f;
-			g_Player.move.x += sinf(D3DX_PI * 0.75f) * 0.5f;
+			g_Player.move.y += cosf(D3DX_PI * 0.75f) * PLAYER_SPEED;
+			g_Player.move.x += sinf(D3DX_PI * 0.75f) * PLAYER_SPEED;
 		}
 		else if (GetKeyboardPress(DIK_S) == true || GetJoypadPress(JOYKEY_DOWN) == true)
 		{//Sキーが押された
-			g_Player.move.y += cosf(D3DX_PI * 0.25f) * 0.5f;
-			g_Player.move.x += sinf(D3DX_PI * 0.25f) * 0.5f;
+			g_Player.move.y += cosf(D3DX_PI * 0.25f) * PLAYER_SPEED;
+			g_Player.move.x += sinf(D3DX_PI * 0.25f) * PLAYER_SPEED;
 		}
 		else
 		{//Dキーだけ
-			g_Player.move.x += 0.5f;
+			g_Player.move.x += PLAYER_SPEED;
 		}
 #endif
 #ifdef _RELEASE
 		if (GetKeyboardPress(DIK_D) == true)
 		{//Dキーだけ
-			g_Player.move.x += 0.5f;
+			g_Player.move.x += PLAYER_SPEED;
 		}
 #endif // 
 
@@ -335,11 +338,11 @@ void ActionPlayer()
 #ifdef _DEBUG
 	else if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 	{//Wキーが押された
-		g_Player.move.y -= 0.5f;
+		g_Player.move.y -= PLAYER_SPEED;
 	}
 	else if (GetKeyboardPress(DIK_S) == true || GetJoypadPress(JOYKEY_DOWN) == true)
 	{//sキーが押された
-		g_Player.move.y += 0.5f;
+		g_Player.move.y += PLAYER_SPEED;
 	}
 	if (KeyboardTrigger(DIK_SPACE) == true || GetJoypadPress(JOYKEY_X) == true)
 	{//スペースキー||Xキー（ゲームパッド）

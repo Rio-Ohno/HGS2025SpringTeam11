@@ -9,12 +9,13 @@
 #define _BULLET_H_
 
 #include "main.h"
+#include"block.h"
 
 //マクロ定義
 #define MAX_BULLET (256)                                   //弾の最大数
 #define BULLET_WIDTH (10)                                  //ポリゴンの幅
 #define BULLET_HEIGHT (10)                                 //ポリゴンの高さ
-#define BULLET_SPEED ((float)2.0f)						   //弾のスピード
+#define BULLET_SPEED ((float)5.0f)						   //弾のスピード
 
 //弾のユーザー
 typedef enum
@@ -42,6 +43,7 @@ typedef struct
 	D3DXVECTOR3 oldpos;                                    //前の位置
 	D3DXVECTOR3 move;                                      //移動量
 	D3DXVECTOR3 rot;                                       //向き
+	Block* pBlock;
 	float fLengthBullet;                                   //ポリゴンの対角線の長さ
 	float fAngleBullet;                                    //ポリゴンの角度
 	float fLife;                                           //寿命
