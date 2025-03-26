@@ -312,7 +312,7 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 
 	//íeÇÃèâä˙âª
 	InitBullet();
-	SetBullet(D3DXVECTOR3(640.0f,360.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f),10.0f,100.0f);
+	SetBullet(D3DXVECTOR3(640.0f,360.0f,0.0f),D3DXVECTOR3(0.0f,0.0f,0.0f),30.0f,100.0f);
 
 	g_bEdit = false;
 	return S_OK;

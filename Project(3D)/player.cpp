@@ -161,8 +161,8 @@ void UpdatePlayer()
 		g_Player.pos.y += g_Player.move.y;
 
 		//移動量を更新（減衰）
-		g_Player.move.x += (0.0f - g_Player.move.x) * 0.08f;
-		g_Player.move.y += (0.0f - g_Player.move.y) * 0.08f;//あんまりいらないから数字でかめにしてる
+		g_Player.move.x += (0.0f - g_Player.move.x) * 0.09f;
+		g_Player.move.y += (0.0f - g_Player.move.y) * 0.09f;//あんまりいらないから数字でかめにしてる
 
 		//画面外に出ないようにする処理
 		if ((g_Player.pos.x + sinf(g_Player.rot.z - (D3DX_PI - g_Player.fAngle)) * g_Player.fLength) < 0.0f)

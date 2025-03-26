@@ -43,7 +43,7 @@ void InitBullet(void)
 	for (nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++)
 	{
 		g_aBullet[nCntBullet].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//位置の初期化
-		g_aBullet[nCntBullet].move = D3DXVECTOR3(-BULLET_SPEED, BULLET_SPEED, 0.0f);									//移動量の初期化
+		g_aBullet[nCntBullet].move = D3DXVECTOR3(-BULLET_SPEED*0.5f, BULLET_SPEED, 0.0f);									//移動量の初期化
 		g_aBullet[nCntBullet].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//角度の初期化
 
 		//対角線の長さを算出する
@@ -160,7 +160,6 @@ void UpdateBullet()
 
 			if (pPlayer->bUse == true)
 			{
-				//プレイヤーとの当たり判定
 				if (g_aBullet[nCntBullet].pos.x >= pPlayer->pos.x - NUM_WIDTH
 					&& g_aBullet[nCntBullet].pos.x <= pPlayer->pos.x + NUM_WIDTH
 					&& g_aBullet[nCntBullet].pos.y >= pPlayer->pos.y - NUM_HEIGHT
@@ -200,24 +199,10 @@ void UpdateBullet()
 		pVtx[3].pos.y = g_aBullet[nCntBullet].pos.y + cosf(g_aBullet[nCntBullet].rot.z - (0.0f - g_aBullet[nCntBullet].fAngleBullet)) * (g_aBullet[nCntBullet].fLengthBullet / 5);
 		pVtx[3].pos.z = 0.0f;
 
-		if (g_aBullet[nCntBullet].pos.x<=0.0f|| g_aBullet[nCntBullet].pos.x >= SCREEN_WIDTH
-			                                  || g_aBullet[nCntBullet].pos.y <= 0.0f|| g_aBullet[nCntBullet].pos.y >= SCREEN_HEIGHT)//弾が画面外にでた
-		{
-			//g_aBullet[nCntBullet].rot.z += D3DX_PI;
-
-			////目標の移動方向（角度）の補正
-			//if (g_aBullet[nCntBullet].rot.z > D3DX_PI)
-			//{
-			//	g_aBullet[nCntBullet].rot.z -= D3DX_PI * 2.0f;
-			//}
-			//else if (g_aBullet[nCntBullet].rot.z < -D3DX_PI)
-			//{
-			//	g_aBullet[nCntBullet].rot.z += D3DX_PI * 2.0f;
-			//}
-
-			//g_aBullet[nCntBullet].bUse = false;//使用していない状態にする
-			//nNumBullet--;
-		}
+		//if (g_aBullet[nCntBullet].pos.x<=0.0f|| g_aBullet[nCntBullet].pos.x >= SCREEN_WIDTH
+		//	                                  || g_aBullet[nCntBullet].pos.y <= 0.0f|| g_aBullet[nCntBullet].pos.y >= SCREEN_HEIGHT)//弾が画面外にでた
+		//{
+		//}
 
 		//g_aBullet[nCntBullet].fLife --;//寿命デクリメント
 
@@ -334,25 +319,52 @@ int GetNumBullet()
 //弾の反射処理
 //=============================================================================================================
 void ReflectBullet(int indx)
-{
+{//プレイヤーとの当たり判定
 	//プレイヤーの取得
 	Player *pPlayer = GetPlayer();
-	D3DXVECTOR3 vecplayer = D3DXVECTOR3(pPlayer->pos.x - NUM_WIDTH - pPlayer->pos.x + NUM_WIDTH, pPlayer->pos.y - NUM_HEIGHT - pPlayer->pos.y + NUM_HEIGHT, 0.0f);
-	D3DXVECTOR3 vecBullet = g_aBullet[indx].pos - g_aBullet[indx].oldpos;
-	D3DXVECTOR3 nor;
-	D3DXVECTOR3 c, e, d, f, g = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	float Dot;
 
-	D3DXVec3Cross(&nor, &vecplayer, &vecBullet);
+		D3DXVECTOR3 vecplayer = D3DXVECTOR3(pPlayer->pos.x - NUM_WIDTH - pPlayer->pos.x + NUM_WIDTH, pPlayer->pos.y - NUM_HEIGHT - pPlayer->pos.y + NUM_HEIGHT, 0.0f);
+		D3DXVECTOR3 vecBullet = g_aBullet[indx].pos - g_aBullet[indx].oldpos;
+		D3DXVECTOR3 nor;
+		D3DXVECTOR3 c, e, d, f, g = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		float Dot;
 
-	//逆ベクトルにする
-	vecBullet *= -1.0f;
+		D3DXVec3Cross(&nor, &vecplayer, &vecBullet);
 
-	//内積
-	Dot = D3DXVec3Dot(&vecBullet, &nor);
-	c = vecBullet + Dot * nor;
-	e = vecBullet + 2 * Dot * nor;
+		//逆ベクトルにする
+		vecBullet *= -1.0f;
 
-	//g_aBullet[indx].move.x = e.x;
-	g_aBullet[indx].move.y = e.y;
+		//内積
+		Dot = D3DXVec3Dot(&vecBullet, &nor);
+		c = vecBullet + Dot * nor;
+		e = vecBullet + 2 * Dot * nor;
+
+		//当たり判定(ｙ軸)
+	if (g_aBullet[indx].pos.x >= pPlayer->pos.x - NUM_WIDTH
+		&& g_aBullet[indx].pos.x <= pPlayer->pos.x + NUM_WIDTH)
+	{
+		if (g_aBullet[indx].oldpos.y <=  pPlayer->pos.y - NUM_HEIGHT && g_aBullet[indx].pos.y > pPlayer->pos.y - NUM_HEIGHT)
+		{
+			g_aBullet[indx].move.y = e.y;
+		}
+		else if (g_aBullet[indx].oldpos.y >= pPlayer->pos.y + NUM_HEIGHT && g_aBullet[indx].pos.y < pPlayer->pos.y + NUM_HEIGHT)
+		{
+			g_aBullet[indx].move.y = e.y;
+		}
+	}
+	//当たり判定(ｘ軸)
+	if (g_aBullet[indx].pos.y >= pPlayer->pos.y - NUM_HEIGHT
+		&& g_aBullet[indx].pos.y <= pPlayer->pos.y + NUM_HEIGHT)
+	{
+		if (g_aBullet[indx].oldpos.x <= pPlayer->pos.x - NUM_WIDTH && g_aBullet[indx].pos.x > pPlayer->pos.x - NUM_WIDTH)
+		{
+			g_aBullet[indx].move.x = e.x;
+			g_aBullet[indx].move.y = e.y;
+		}
+		else if (g_aBullet[indx].oldpos.x >= pPlayer->pos.x + NUM_WIDTH && g_aBullet[indx].pos.x < pPlayer->pos.x + NUM_WIDTH)
+		{
+			g_aBullet[indx].move.x = e.x;
+			g_aBullet[indx].move.y = e.y;
+		}
+	}
 }
