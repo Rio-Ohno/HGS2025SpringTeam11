@@ -11,11 +11,10 @@
 #include "main.h"
 
 //マクロ定義
-#define MAX_SIZE (400.0f)                                                       //ポリゴンの最大(対角線)
-#define MIN_SIZE (50.0f)                                                        //ポリゴンの最小(対角線)
-#define NUM_WIDTH (60)											                //ポリゴンの幅
-#define NUM_HEIGHT (20)	                                                        //ポリゴンの高さ
-#define PLAYERLIFE (1000.0f)													//プレイヤーのライフ
+#define MAX_BULLET (256)                                   //弾の最大数
+#define BULLET_WIDTH (10)                                  //ポリゴンの幅
+#define BULLET_HEIGHT (10)                                 //ポリゴンの高さ
+#define BULLET_SPEED ((float)2.0f)						   //弾のスピード
 
 //弾のユーザー
 typedef enum
@@ -56,6 +55,7 @@ void UpdateBullet();
 void DrawBullet();
 void SetBullet(D3DXVECTOR3 pos, D3DXVECTOR3 rot, float fLength,float nLife);
 void ReflectBullet(int indx);
+Bullet* GetBullet();
 
 //============================================================================================================================================
 //デバック用

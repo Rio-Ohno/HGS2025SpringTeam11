@@ -10,6 +10,13 @@
 
 #include"main.h"
 
+//マクロ定義
+#define MAX_SIZE (400.0f)                                                       //ポリゴンの最大(対角線)
+#define MIN_SIZE (50.0f)                                                        //ポリゴンの最小(対角線)
+#define NUM_WIDTH (60)											                //ポリゴンの幅
+#define NUM_HEIGHT (20)	                                                        //ポリゴンの高さ
+#define PLAYERLIFE (1000.0f)													//プレイヤーのライフ
+
 //プレイヤーの状態
 typedef enum
 {

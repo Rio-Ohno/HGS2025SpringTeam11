@@ -11,6 +11,7 @@
 #include "input.h"
 #include "player.h"
 #include "stage.h"
+#include "bullet.h"
 
 //グローバル変数
 LPDIRECT3DTEXTURE9 g_pTextureBlock[TYPE_BLOCK] = {};		//テクスチャへのポインタ
@@ -318,100 +319,148 @@ void SetBlock(D3DXVECTOR3 pos, D3DXVECTOR3 move, float fWidth, float fHeight, in
 
 }
 
-////ブロック当たり判定(X)
-//void CollisionBlockX(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float fHeight, float fWidth,Block **pBlock)
-//{
-//	bool bLanding = false;//着地しているかどうか
-//
-//	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
-//	{
-//		if (g_aBlock[nCntBlock].bUse == true)
-//		{
-//			//プレイヤーのyの範囲がブロックに重なっている左右の当たり判定
-//			if (pPosOld->y > g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2 && pPosOld->y - PLAYER_HEIGHT < g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2)
-//			{
-//				//左から右にブロックがめり込んだ場合
-//				if (pPosOld->x + PLAYER_WIDTH / 2 + g_aBlock[nCntBlock].move.x <= g_aBlock[nCntBlock].pos.x - (g_aBlock[nCntBlock].fWidth / 2) + pMove->x && pPos->x + PLAYER_WIDTH / 2 > g_aBlock[nCntBlock].pos.x - (g_aBlock[nCntBlock].fWidth / 2))
-//				{
-//					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
-//					{
-//						g_aBlock[nCntBlock].bUse = false;
-//					}
-//					else
-//					{
-//						pPos->x = g_aBlock[nCntBlock].pos.x - g_aBlock[nCntBlock].fWidth / 2 - PLAYER_WIDTH / 2;
-//						pMove->x = 0.0f;
-//						*pBlock = &g_aBlock[nCntBlock];
-//					}
-//				}
-//				//右から左にブロックがめり込んだ場合
-//				else if (pPosOld->x - PLAYER_WIDTH / 2 + g_aBlock[nCntBlock].move.x >= g_aBlock[nCntBlock].pos.x + (g_aBlock[nCntBlock].fWidth / 2) + pMove->x && pPos->x - PLAYER_WIDTH / 2 < g_aBlock[nCntBlock].pos.x + (g_aBlock[nCntBlock].fWidth / 2))
-//				{
-//					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
-//					{
-//						g_aBlock[nCntBlock].bUse = false;
-//					}
-//					else
-//					{
-//						pPos->x = g_aBlock[nCntBlock].pos.x + g_aBlock[nCntBlock].fWidth / 2 + PLAYER_WIDTH / 2;
-//						pMove->x = 0.0f;
-//						*pBlock = &g_aBlock[nCntBlock];
-//					}
-//				}
-//			}
-//
-//		}
-//	}
-//}
-//
-////ブロックの当たり判定(Y)
-//bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float fHeight, float fWidth,Block **pBlock)
-//{
-//	bool bLanding = false;//着地しているかどうか
-//
-//	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
-//	{
-//		if (g_aBlock[nCntBlock].bUse == true)
-//		{
-//			//プレイヤーのxの範囲がブロックに重なっている上下の当たり判定
-//			if (pPos->x + PLAYER_WIDTH / 2 > g_aBlock[nCntBlock].pos.x - g_aBlock[nCntBlock].fWidth / 2 && pPos->x - PLAYER_WIDTH / 2 < g_aBlock[nCntBlock].pos.x + g_aBlock[nCntBlock].fWidth / 2)
-//			{
-//				//上から下にブロックがめり込んだ場合
-//				if (pPosOld->y <= g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2 && pPos->y > g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2)
-//				{
-//					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
-//					{
-//						g_aBlock[nCntBlock].bUse = false;
-//					}
-//					else
-//					{
-//
-//						bLanding = true;
-//						pPos->y = g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2;
-//						pMove->y = 0.0f;
-//						*pBlock = &g_aBlock[nCntBlock];
-//					}
-//				}
-//				//下から上にブロックがめり込んだ場合
-//				else if (pPosOld->y - PLAYER_HEIGHT >= g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2 && pPos->y - PLAYER_HEIGHT < g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2)
-//				{
-//					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
-//					{
-//						g_aBlock[nCntBlock].bUse = false;
-//					}
-//					else
-//					{
-//						pPos->y = g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2 + PLAYER_HEIGHT;
-//						pMove->y = 0.0f;
-//					}
-//				}
-//
-//			}
-//
-//		}
-//	}
-//	return bLanding;
-//}
+//ブロック当たり判定(X)
+void CollisionBlockX(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float fHeight, float fWidth,Block **pBlock)
+{
+	bool bLanding = false;//着地しているかどうか
+
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
+	{
+		if (g_aBlock[nCntBlock].bUse == true)
+		{
+			//プレイヤーのyの範囲がブロックに重なっている左右の当たり判定
+			if (pPosOld->y > g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2 && pPosOld->y - BULLET_WIDTH < g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2)
+			{
+				//左から右にブロックがめり込んだ場合
+				if (pPosOld->x + BULLET_WIDTH / 2 + g_aBlock[nCntBlock].move.x <= g_aBlock[nCntBlock].pos.x - (g_aBlock[nCntBlock].fWidth / 2) + pMove->x && pPos->x + BULLET_WIDTH / 2 > g_aBlock[nCntBlock].pos.x - (g_aBlock[nCntBlock].fWidth / 2))
+				{
+					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
+					{
+						g_aBlock[nCntBlock].bUse = false;
+					}
+					else
+					{
+						pPos->x = g_aBlock[nCntBlock].pos.x - g_aBlock[nCntBlock].fWidth / 2 - BULLET_WIDTH / 2;
+						pMove->x = 0.0f;
+						*pBlock = &g_aBlock[nCntBlock];
+					}
+				}
+				//右から左にブロックがめり込んだ場合
+				else if (pPosOld->x - BULLET_WIDTH / 2 + g_aBlock[nCntBlock].move.x >= g_aBlock[nCntBlock].pos.x + (g_aBlock[nCntBlock].fWidth / 2) + pMove->x && pPos->x - BULLET_WIDTH / 2 < g_aBlock[nCntBlock].pos.x + (g_aBlock[nCntBlock].fWidth / 2))
+				{
+					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
+					{
+						g_aBlock[nCntBlock].bUse = false;
+					}
+					else
+					{
+						pPos->x = g_aBlock[nCntBlock].pos.x + g_aBlock[nCntBlock].fWidth / 2 + BULLET_WIDTH / 2;
+						pMove->x = 0.0f;
+						*pBlock = &g_aBlock[nCntBlock];
+					}
+				}
+			}
+
+		}
+	}
+}
+
+//ブロックの当たり判定(Y)
+bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove, float fHeight, float fWidth,Block **pBlock)
+{
+	bool bLanding = false;//着地しているかどうか
+
+	for (int nCntBlock = 0; nCntBlock < MAX_BLOCK; nCntBlock++)
+	{
+		if (g_aBlock[nCntBlock].bUse == true)
+		{
+			//プレイヤーの取得
+			Player* pPlayer = GetPlayer();
+
+			D3DXVECTOR3 vecplayer = D3DXVECTOR3(pPlayer->pos.x - NUM_WIDTH - pPlayer->pos.x + NUM_WIDTH, pPlayer->pos.y - NUM_HEIGHT - pPlayer->pos.y + NUM_HEIGHT, 0.0f);
+			D3DXVECTOR3 vecBullet = g_aBullet[indx].pos - g_aBullet[indx].oldpos;
+			D3DXVECTOR3 nor;
+			D3DXVECTOR3 c, e, d, f, g = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+			float Dot;
+
+			D3DXVec3Cross(&nor, &vecplayer, &vecBullet);
+
+			//逆ベクトルにする
+			vecBullet *= -1.0f;
+
+			//内積
+			Dot = D3DXVec3Dot(&vecBullet, &nor);
+			c = vecBullet + Dot * nor;
+			e = vecBullet + 2 * Dot * nor;
+
+			//当たり判定(ｙ軸)
+			if (g_aBullet[indx].pos.x >= pPlayer->pos.x - NUM_WIDTH
+				&& g_aBullet[indx].pos.x <= pPlayer->pos.x + NUM_WIDTH)
+			{
+				if (g_aBullet[indx].oldpos.y <= pPlayer->pos.y - NUM_HEIGHT && g_aBullet[indx].pos.y > pPlayer->pos.y - NUM_HEIGHT)
+				{
+					g_aBullet[indx].move.y = e.y;
+				}
+				else if (g_aBullet[indx].oldpos.y >= pPlayer->pos.y + NUM_HEIGHT && g_aBullet[indx].pos.y < pPlayer->pos.y + NUM_HEIGHT)
+				{
+					g_aBullet[indx].move.y = e.y;
+				}
+			}
+			//当たり判定(ｘ軸)
+			if (g_aBullet[indx].pos.y >= pPlayer->pos.y - NUM_HEIGHT
+				&& g_aBullet[indx].pos.y <= pPlayer->pos.y + NUM_HEIGHT)
+			{
+				if (g_aBullet[indx].oldpos.x <= pPlayer->pos.x - NUM_WIDTH && g_aBullet[indx].pos.x > pPlayer->pos.x - NUM_WIDTH)
+				{
+					g_aBullet[indx].move.x = e.x;
+					g_aBullet[indx].move.y = e.y;
+				}
+				else if (g_aBullet[indx].oldpos.x >= pPlayer->pos.x + NUM_WIDTH && g_aBullet[indx].pos.x < pPlayer->pos.x + NUM_WIDTH)
+				{
+					g_aBullet[indx].move.x = e.x;
+					g_aBullet[indx].move.y = e.y;
+				}
+			}
+
+			//プレイヤーのxの範囲がブロックに重なっている上下の当たり判定
+			if (pPos->x + BULLET_WIDTH / 2 > g_aBlock[nCntBlock].pos.x - g_aBlock[nCntBlock].fWidth / 2 && pPos->x - BULLET_WIDTH / 2 < g_aBlock[nCntBlock].pos.x + g_aBlock[nCntBlock].fWidth / 2)
+			{
+				//上から下にブロックがめり込んだ場合
+				if (pPosOld->y <= g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2 && pPos->y > g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2)
+				{
+					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
+					{
+						g_aBlock[nCntBlock].bUse = false;
+					}
+					else
+					{
+
+						bLanding = true;
+						pPos->y = g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight / 2;
+						pMove->y = 0.0f;
+						*pBlock = &g_aBlock[nCntBlock];
+					}
+				}
+				//下から上にブロックがめり込んだ場合
+				else if (pPosOld->y - BULLET_WIDTH >= g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2 && pPos->y - BULLET_WIDTH < g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2)
+				{
+					if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
+					{
+						g_aBlock[nCntBlock].bUse = false;
+					}
+					else
+					{
+						pPos->y = g_aBlock[nCntBlock].pos.y + g_aBlock[nCntBlock].fHeight / 2 + BULLET_WIDTH;
+						pMove->y = 0.0f;
+					}
+				}
+
+			}
+
+		}
+	}
+	return bLanding;
+}
 //
 int GetNumSoul()
 {

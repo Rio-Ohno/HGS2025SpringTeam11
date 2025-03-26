@@ -9,12 +9,7 @@
 //#include"exploosion.h"
 #include"player.h"
 #include"score.h"
-
-//マクロ定義
-#define MAX_BULLET (256)                                   //弾の最大数
-#define BULLET_WIDTH (10)                                  //ポリゴンの幅
-#define BULLET_HEIGHT (10)                                 //ポリゴンの高さ
-#define BULLET_SPEED ((float)1.0f)						   //弾のスピード
+#include"block.h"
 
 //グローバル変数
 LPDIRECT3DTEXTURE9 g_pTextureBullet = NULL;				   //テクスチャへのポインタ
@@ -367,4 +362,9 @@ void ReflectBullet(int indx)
 			g_aBullet[indx].move.y = e.y;
 		}
 	}
+}
+
+Bullet* GetBullet()
+{
+	return &g_aBullet[0];
 }
