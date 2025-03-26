@@ -37,7 +37,7 @@ void InitBullet(void)
 	for (nCntBullet = 0; nCntBullet < MAX_BULLET; nCntBullet++)
 	{
 		g_aBullet[nCntBullet].pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//ˆÊ’u‚Ì‰Šú‰»
-		g_aBullet[nCntBullet].move = D3DXVECTOR3(-BULLET_SPEED*0.5f, BULLET_SPEED, 0.0f);									//ˆÚ“®—Ê‚Ì‰Šú‰»
+		g_aBullet[nCntBullet].move = D3DXVECTOR3(-BULLET_SPEED*0.75f, BULLET_SPEED, 0.0f);									//ˆÚ“®—Ê‚Ì‰Šú‰»
 		g_aBullet[nCntBullet].rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);									//Šp“x‚Ì‰Šú‰»
 		g_aBullet[nCntBullet].pBlock = NULL;
 

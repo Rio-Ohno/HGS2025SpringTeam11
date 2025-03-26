@@ -43,7 +43,7 @@ void InitPlayer()
 	g_nCounterAnimPlayer = 0;													//カウンターを初期化する
 	g_nPatternAnimPlayer = 0;													//パターンNO.を初期化する
 
-	g_Player.pos = D3DXVECTOR3(1320.0f,625.0f,0);								//位置を初期化する
+	g_Player.pos = D3DXVECTOR3(1320.0f,650.0f,0);								//位置を初期化する
 	g_Player.move = D3DXVECTOR3(0.0f,0.0f,0.0f);								//移動量を初期化する
 	g_Player.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);								//向きを初期化する
 	g_Player.state = PLAYERSTATE_NORMAL;										//敵の状態の初期化
@@ -285,7 +285,6 @@ void ActionPlayer()
 {
 	if (GetKeyboardPress(DIK_A) == true || GetJoypadPress(JOYKEY_LEFT) == true)
 	{
-#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキー||上（ゲームパッド）が押された
 			g_Player.move.y += cosf(-D3DX_PI * 0.75f) * PLAYER_SPEED;
@@ -300,17 +299,13 @@ void ActionPlayer()
 		{//Aキー||左（ゲームパッド）だけ
 			g_Player.move.x -= PLAYER_SPEED;
 		}
-#endif
-#ifdef _RELEASE
 		if (GetKeyboardPress(DIK_A))
 		{
 			g_Player.move.x -= PLAYER_SPEED;
 		}
-#endif
 	}
 	else if (GetKeyboardPress(DIK_D) == true || GetJoypadPress(JOYKEY_RIGHT) == true)
 	{//Dキーが押された
-#ifdef _DEBUG
 		if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 		{//Wキーが押された
 			g_Player.move.y += cosf(D3DX_PI * 0.75f) * PLAYER_SPEED;
@@ -325,17 +320,7 @@ void ActionPlayer()
 		{//Dキーだけ
 			g_Player.move.x += PLAYER_SPEED;
 		}
-#endif
-#ifdef _RELEASE
-		if (GetKeyboardPress(DIK_D) == true)
-		{//Dキーだけ
-			g_Player.move.x += PLAYER_SPEED;
-		}
-#endif // 
-
-
 	}
-#ifdef _DEBUG
 	else if (GetKeyboardPress(DIK_W) == true || GetJoypadPress(JOYKEY_UP) == true)
 	{//Wキーが押された
 		g_Player.move.y -= PLAYER_SPEED;
@@ -346,9 +331,8 @@ void ActionPlayer()
 	}
 	if (KeyboardTrigger(DIK_SPACE) == true || GetJoypadPress(JOYKEY_X) == true)
 	{//スペースキー||Xキー（ゲームパッド）
-		SetBullet(g_Player.pos, g_Player.rot, g_Player.fLength, 100);
+		//SetBullet(g_Player.pos, g_Player.rot, g_Player.fLength, 100);
 	}
-#endif
 
 }
 

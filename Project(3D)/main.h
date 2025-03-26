@@ -78,6 +78,7 @@ void Update(void);
 void Draw(void);
 void onWireFrame();
 void offWireFrame();
+void SetMode(MODE mode);
 MODE GetMode(void);
 LPDIRECT3DDEVICE9 GetDevice(void);
 D3DXVECTOR3 *PitoRadian(D3DXVECTOR3 *rot);		// ƒ‰ƒWƒAƒ“’l‚©‚çPI‚É•ÏŠ·‚·‚éˆ—
