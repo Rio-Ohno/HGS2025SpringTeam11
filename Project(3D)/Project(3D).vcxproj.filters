@@ -27,6 +27,15 @@
     <ClCompile Include="player.cpp">
       <Filter>OR</Filter>
     </ClCompile>
+    <ClCompile Include="backgraund.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="bullet.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
+    <ClCompile Include="debugproc.cpp">
+      <Filter>OR</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -44,10 +53,16 @@
     <ClInclude Include="sound.h">
       <Filter>OR</Filter>
     </ClInclude>
-    <ClInclude Include="status.h">
+    <ClInclude Include="player.h">
       <Filter>OR</Filter>
     </ClInclude>
-    <ClInclude Include="player.h">
+    <ClInclude Include="backgraund.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="bullet.h">
+      <Filter>OR</Filter>
+    </ClInclude>
+    <ClInclude Include="debugproc.h">
       <Filter>OR</Filter>
     </ClInclude>
   </ItemGroup>

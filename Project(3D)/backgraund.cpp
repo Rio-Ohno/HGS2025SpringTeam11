@@ -110,11 +110,9 @@ void Initbackgraund()
 //=============================================================================================================
 void Drawbackgraund()
 {
-	LPDIRECT3DDEVICE9 pDevice;															 //デバイスへのポインタ
 	int nCntBG = 0;
-
 	//デバイスの取得
-	pDevice = GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = GetDevice();														 //デバイスへのポインタ
 
 	//頂点バッファをデータストリームに設定
 	pDevice->SetStreamSource(0, g_pVtxBuffbackgraund, 0, sizeof(VERTEX_2D));

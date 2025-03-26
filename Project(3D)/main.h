@@ -38,21 +38,6 @@
 #define MAX_WORD (4096)
 #define TOPI (float)(0.0174f)
 
-//テクスチャ
-static const char* TEXTURE[10]
-{
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
-
 //頂点情報(2D)の構造体
 typedef struct
 {
@@ -108,4 +93,7 @@ float Angle(D3DXVECTOR2 Vec);
 void NearRot(float Angle,float &OutAngle);
 // 実作業系の関数
 void SetAngle(float fAngle,float &OutAngle);
+
+////エディターのステージ読み込み
+//void LoadStage();
 #endif

@@ -7,14 +7,14 @@
 
 #include"player.h"
 #include"input.h"
-//#include"bullet.h"
+#include"bullet.h"
 //#include"exploosion.h"
 
 //マクロ定義
 #define MAX_SIZE (400.0f)                                                       //ポリゴンの最大(対角線)
 #define MIN_SIZE (50.0f)                                                        //ポリゴンの最小(対角線)
-#define NUM_WIDTH (40)											                //ポリゴンの幅
-#define NUM_HEIGHT (80)	                                                        //ポリゴンの高さ
+#define NUM_WIDTH (60)											                //ポリゴンの幅
+#define NUM_HEIGHT (20)	                                                        //ポリゴンの高さ
 #define PLAYERLIFE (1000.0f)													//プレイヤーのライフ
 
 //グローバル変数宣言
@@ -333,9 +333,7 @@ void ActionPlayer()
 
 	if (KeyboardTrigger(DIK_SPACE) == true || GetJoypadPress(JOYKEY_X) == true)
 	{//スペースキー||Xキー（ゲームパッド）
-		//SetBullet(g_Player.pos, D3DXVECTOR3(sinf(g_Player.rot.z + D3DX_PI) * 7.5f, cosf(g_Player.rot.z + D3DX_PI) * 7.5f, 0.0f), g_Player.rot, g_Player.fLength, 100,BULLETUSER_PLAYER, BULLETTYPE_NULL);
-		//SetBullet(g_Player.pos, D3DXVECTOR3(sinf(g_Player.rot.z + D3DX_PI*0.75f) * 7.5f, cosf(g_Player.rot.z + D3DX_PI*0.75f) * 7.5f, 0.0f), g_Player.rot, g_Player.fLength,100,BULLETTYPE_PLAYER);
-		//SetBullet(g_Player.pos, D3DXVECTOR3(sinf(g_Player.rot.z + (-D3DX_PI*0.75f)) * 7.5f, cosf(g_Player.rot.z + (-D3DX_PI*0.75f)) * 7.5f, 0.0f), g_Player.rot,g_Player.fLength,100,BULLETTYPE_PLAYER);
+		SetBullet(g_Player.pos, D3DXVECTOR3(sinf(g_Player.rot.z + D3DX_PI) * 7.5f, cosf(g_Player.rot.z + D3DX_PI) * 7.5f, 0.0f), g_Player.rot, g_Player.fLength, 100,BULLETUSER_PLAYER, BULLETTYPE_NULL);
 	}
 }
 

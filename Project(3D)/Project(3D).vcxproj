@@ -142,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="backgraund.cpp" />
+    <ClCompile Include="bullet.cpp" />
+    <ClCompile Include="debugproc.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="player.cpp" />
@@ -150,12 +153,14 @@
     <ClCompile Include="Time.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="backgraund.h" />
+    <ClInclude Include="bullet.h" />
+    <ClInclude Include="debugproc.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="player.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="sound.h" />
-    <ClInclude Include="status.h" />
     <ClInclude Include="Time.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

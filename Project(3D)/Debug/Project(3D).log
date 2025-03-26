@@ -1,2 +1,4 @@
 ﻿  main.cpp
-  Project(3D).vcxproj -> C:\Users\student\OneDrive - yoshida-g.ac.jp\デスクトップ\HGS2025SpringTeam11\Project(3D).exe
+C:\Users\student\OneDrive - yoshida-g.ac.jp\デスクトップ\HGS2025SpringTeam11\Project(3D)\main.cpp(310,2): error C3861: 'LoadStage': 識別子が見つかりませんでした
+  sound.cpp
+  コードを生成中...

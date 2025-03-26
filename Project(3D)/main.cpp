@@ -10,6 +10,7 @@
 #include "player.h"
 #include <crtdbg.h>
 #include <stdio.h>
+#include "bullet.h"
 
 //グローバル変数宣言
 LPDIRECT3D9 g_pD3D = NULL;
@@ -18,6 +19,7 @@ MODE g_mode = MODE_TITLE;
 LPD3DXFONT g_pFont;
 RECT g_windowRect; // ウィンドウ切り替え変数
 bool bDispFont = true;
+bool g_bEdit = false;
 bool g_isFullscreen = false; // 初期状態をフルスクリーンにしない
 
 // プロトタイプ宣言
@@ -307,6 +309,10 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow)
 	//プレイヤーの初期化
 	InitPlayer();
 
+	//弾の初期化
+	InitBullet();
+
+	g_bEdit = false;
 	return S_OK;
 }
 
@@ -326,6 +332,8 @@ void Uninit(void)
 	UninitJoypad();
 
 	UninitPlayer();
+
+	UninitBullet();
 
 	//D3Dデバイスの破棄
 	if (g_pD3DDevice != NULL)
@@ -353,8 +361,28 @@ void Update(void)
 	UpdateKeyboard();
 	UpdateJoypad();
 
-	UpdatePlayer();
+#ifdef _DEBUG
+	if (KeyboardTrigger(DIK_F3) == true)
+	{
+		g_bEdit = g_bEdit ? false : true;
+	}
+#endif
 
+	if (g_bEdit == true)
+	{
+
+	}
+	else
+	{
+		////ブロック
+		//UpdateBlock();
+
+		//プレイヤー
+		UpdatePlayer();
+
+		//弾
+		UpdateBullet();
+	}
 
 #ifdef _DEBUG
 	////ワイヤー
@@ -389,7 +417,14 @@ void Draw(void)
 	if (SUCCEEDED(g_pD3DDevice->BeginScene()))
 	{//描画開始成功時
 
-		DrawPlayer();
+		if (g_bEdit == false)
+		{
+			//プレイヤーの描画処理
+			DrawPlayer();
+
+			//弾の描画処理
+			DrawBullet();
+		}
 
 #ifdef _DEBUG
 
