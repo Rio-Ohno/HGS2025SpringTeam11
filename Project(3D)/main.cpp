@@ -5,6 +5,7 @@
 //
 //================================
 #include "main.h"
+#include "block.h"
 #include "input.h"
 #include "sound.h"
 #include "player.h"

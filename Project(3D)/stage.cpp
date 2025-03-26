@@ -45,14 +45,14 @@ void LoadStage(int nStage)
 	char stagefilename[MAX_WORD];
 	Player* pPlayer = GetPlayer();
 
-	if (GetModeMenu() == MODE_MENU_NORMALMODE)
-	{
-		sprintf(stagefilename, "data/STAGE/Normal/stage%d.txt", nStage);
-	}
-	else if (GetModeMenu() == MODE_MENU_WASUKEMODE)
-	{
-		sprintf(stagefilename, "data/STAGE/Yamada/stage%d.txt", nStage);
-	}
+	//if (GetModeMenu() == MODE_MENU_NORMALMODE)
+	//{
+	//	sprintf(stagefilename, "data/STAGE/Normal/stage%d.txt", nStage);
+	//}
+	//else if (GetModeMenu() == MODE_MENU_WASUKEMODE)
+	//{
+	//	sprintf(stagefilename, "data/STAGE/Yamada/stage%d.txt", nStage);
+	//}
 
 	pFile = fopen(stagefilename, "r");
 
