@@ -434,15 +434,21 @@ bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove
 					{
 						g_aBlock[nCntBlock].bUse = false;
 					}
-					else if (g_aBlock[nCntBlock].ntype == 6)
+					else if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_CLEARBUTTON)
 					{
-						pPos->y = 100.0f + 40.0f + 1.0f;
-						pPos->x = 1320.0f;
+						pBullet->oldpos.y = 100.0f + 40.0f + 5.0f;
+						pBullet->oldpos.x += 520.0f;
+
+						pBullet->pos.y = 100.0f + 40.0f + 5.0f;
+						pBullet->pos.x += 520.0f;
 					}
-					else if (g_aBlock[nCntBlock].ntype == 7)
+					else if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
 					{
-						pPos->y = 100.0f + 40.0f + 1.0f;
-						pPos->x = 880.0f;
+						pBullet->oldpos.y = 100.0f + 40.0f + 5.0f;
+						pBullet->oldpos.x += 520.0f;
+
+						pBullet->pos.y = 100.0f + 40.0f + 5.0f;
+						pBullet->pos.x += 520.0f;
 					}
 					else
 					{
@@ -461,20 +467,21 @@ bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove
 					{
 						g_aBlock[nCntBlock].bUse = false;
 					}
-					else if (g_aBlock[nCntBlock].ntype == 6)
+					else if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_CLEARBUTTON)
 					{
-						pBullet->oldpos.y = 880.0f - 40.0f + 1.0f;
+						pBullet->oldpos.y = 880.0f - 40.0f + 5.0f;
 						pBullet->oldpos.x -= 520.0f;
 
-						pBullet->pos.y = 880.0f - 40.0f + 1.0f;
-						pBullet->pos.x = 880.0f;
+						pBullet->pos.y = 880.0f - 40.0f + 5.0f;
+						pBullet->pos.x -= 520.0f;
 					}
-					else if (g_aBlock[nCntBlock].ntype == 7)
+					else if (g_aBlock[nCntBlock].ntype == BLOCKTYPE_SOUL)
 					{
-						pBullet->oldpos.y = 880.0f - 40.0f + 1.0f;
+						pBullet->oldpos.y = 100.0f - 40.0f + 5.0f;
 						pBullet->oldpos.x -= 520.0f;
-						pBullet->pos.y = 880.0f - 40.0f + 1.0f;
-						pBullet->pos.x = 520.0f;
+
+						pBullet->pos.y = 880.0f - 40.0f + 5.0f;
+						pBullet->pos.x -= 520.0f;
 					}
 					else
 					{
