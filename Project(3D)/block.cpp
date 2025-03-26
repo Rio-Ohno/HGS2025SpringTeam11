@@ -436,18 +436,18 @@ bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove
 					}
 					else if (g_aBlock[nCntBlock].ntype == 6)
 					{
-						pPos->y = g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight + 1.0f;
+						pPos->y = 100.0f + 40.0f + 1.0f;
+						pPos->x = 1320.0f;
 					}
 					else if (g_aBlock[nCntBlock].ntype == 7)
 					{
-						pBullet->pos.y = 880.0f - 40.0f + 1.0f;
-						pBullet->pos.x = 520.0f;
+						pPos->y = 100.0f + 40.0f + 1.0f;
+						pPos->x = 880.0f;
 					}
 					else
 					{
 						bLanding = true;
 						pBullet->move.y = e.y;
-						*pBlock = &g_aBlock[nCntBlock];
 					}
 				}
 				//‰º‚©‚çã‚ÉƒuƒƒbƒN‚ª‚ß‚èž‚ñ‚¾ê‡
@@ -463,12 +463,18 @@ bool CollisionBlockY(D3DXVECTOR3* pPos, D3DXVECTOR3* pPosOld, D3DXVECTOR3* pMove
 					}
 					else if (g_aBlock[nCntBlock].ntype == 6)
 					{
-						pPos->y = g_aBlock[nCntBlock].pos.y - g_aBlock[nCntBlock].fHeight + 1.0f;
+						pBullet->oldpos.y = 880.0f - 40.0f + 1.0f;
+						pBullet->oldpos.x -= 520.0f;
+
+						pBullet->pos.y = 880.0f - 40.0f + 1.0f;
+						pBullet->pos.x = 880.0f;
 					}
 					else if (g_aBlock[nCntBlock].ntype == 7)
 					{
+						pBullet->oldpos.y = 880.0f - 40.0f + 1.0f;
+						pBullet->oldpos.x -= 520.0f;
 						pBullet->pos.y = 880.0f - 40.0f + 1.0f;
-						pBullet->pos.x = pBullet->pos.x - 520.0f;
+						pBullet->pos.x = 520.0f;
 					}
 					else
 					{
