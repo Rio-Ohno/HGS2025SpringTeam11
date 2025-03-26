@@ -38,6 +38,21 @@
 #define MAX_WORD (4096)
 #define TOPI (float)(0.0174f)
 
+//テクスチャ
+static const char* TEXTURE[10]
+{
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};
+
 //頂点情報(2D)の構造体
 typedef struct
 {
@@ -76,18 +91,11 @@ HRESULT Init(HINSTANCE hInstance, HWND hWnd, BOOL bWindow);
 void Uninit(void);
 void Update(void);
 void Draw(void);
-void DrawPlayerCollision();
-void DrawEffectEditer();
 void onWireFrame();
 void offWireFrame();
-void SetMode(MODE mode);
 MODE GetMode(void);
 LPDIRECT3DDEVICE9 GetDevice(void);
 D3DXVECTOR3 *PitoRadian(D3DXVECTOR3 *rot);		// ラジアン値からPIに変換する処理
-void DrawCameraInfo();
-void DrawPlayerInfo();
-void DrawTestInfo();
-void DrawBossInfo();
 void UninitTexture(LPDIRECT3DTEXTURE9 &Texture);
 void UninitBuffer(LPDIRECT3DVERTEXBUFFER9 &Buffer);
 void UninitMesh(LPD3DXMESH &Mesh);

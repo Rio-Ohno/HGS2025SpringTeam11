@@ -15,67 +15,16 @@
     <ClCompile Include="input.cpp">
       <Filter>OR</Filter>
     </ClCompile>
-    <ClCompile Include="mouse.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="camera.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="light.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="meshfield.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="ranking.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="result.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
     <ClCompile Include="score.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="shadow.cpp">
       <Filter>OR</Filter>
     </ClCompile>
     <ClCompile Include="Time.cpp">
       <Filter>OR</Filter>
     </ClCompile>
-    <ClCompile Include="pause.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="game.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="fade.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
     <ClCompile Include="sound.cpp">
       <Filter>OR</Filter>
     </ClCompile>
-    <ClCompile Include="title.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="resultinfo.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="collision.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="titleinfo.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="loadmotion.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="meshwall.cpp">
-      <Filter>OR</Filter>
-    </ClCompile>
-    <ClCompile Include="meshsphere.cpp">
+    <ClCompile Include="player.cpp">
       <Filter>OR</Filter>
     </ClCompile>
   </ItemGroup>
@@ -86,73 +35,19 @@
     <ClInclude Include="input.h">
       <Filter>OR</Filter>
     </ClInclude>
-    <ClInclude Include="mouse.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="light.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="meshfield.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="ranking.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="result.h">
-      <Filter>OR</Filter>
-    </ClInclude>
     <ClInclude Include="score.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="shadow.h">
       <Filter>OR</Filter>
     </ClInclude>
     <ClInclude Include="Time.h">
       <Filter>OR</Filter>
     </ClInclude>
-    <ClInclude Include="pause.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="game.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="fade.h">
-      <Filter>OR</Filter>
-    </ClInclude>
     <ClInclude Include="sound.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="title.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="resultinfo.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="key.h">
       <Filter>OR</Filter>
     </ClInclude>
     <ClInclude Include="status.h">
       <Filter>OR</Filter>
     </ClInclude>
-    <ClInclude Include="collision.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="titleinfo.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="loadmotion.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="meshwall.h">
-      <Filter>OR</Filter>
-    </ClInclude>
-    <ClInclude Include="meshSphere.h">
+    <ClInclude Include="player.h">
       <Filter>OR</Filter>
     </ClInclude>
   </ItemGroup>
